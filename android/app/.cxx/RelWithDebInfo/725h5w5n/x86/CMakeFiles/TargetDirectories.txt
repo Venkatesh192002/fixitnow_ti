@@ -1,0 +1,2 @@
+/Users/iot/Downloads/fixitnow-main/android/app/.cxx/RelWithDebInfo/725h5w5n/x86/CMakeFiles/edit_cache.dir
+/Users/iot/Downloads/fixitnow-main/android/app/.cxx/RelWithDebInfo/725h5w5n/x86/CMakeFiles/rebuild_cache.dir
