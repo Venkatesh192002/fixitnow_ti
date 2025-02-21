@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "120583001583",
+    "project_id": "auscuratorti",
+    "storage_bucket": "auscuratorti.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:120583001583:android:673a694beb733ae0a0121a",
+        "android_client_info": {
+          "package_name": "com.ausweg.iiot.auscurator_TI"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATXbWt5RYo0dtsDCVK4ScOuG5Iat4JCA0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
