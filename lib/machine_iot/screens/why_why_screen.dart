@@ -661,10 +661,7 @@ class _WhyWhyScreenState extends ConsumerState<WhyWhyScreen> {
     );
   }
 
-  String capitalizeFirstLetter(String text) {
-    if (text.isEmpty) return text;
-    return text[0].toUpperCase() + text.substring(1).toLowerCase();
-  }
+  
 
   // Helper function to create TextFields for single values
   Widget _buildTextField(TextEditingController controller, String label) {
@@ -710,3 +707,7 @@ class _WhyWhyScreenState extends ConsumerState<WhyWhyScreen> {
     return jsonEncode([data]);
   }
 }
+String capitalizeFirstLetter(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1).toLowerCase();
+  }

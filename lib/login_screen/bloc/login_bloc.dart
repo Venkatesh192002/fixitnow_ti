@@ -1,4 +1,5 @@
 import 'package:auscurator/api_service/api_service.dart';
+import 'package:auscurator/api_service_myconcept/keys.dart';
 import 'package:auscurator/login_screen/event/login_btn_click_event.dart';
 import 'package:auscurator/login_screen/state/login_api_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +9,7 @@ class LoginBloc extends Bloc<LoginButtonClickEvent, LoginApiState> {
   LoginBloc() : super(LoginInitialState()) {
     on<OnLoginButtonClicked>((event, emit) async {
       try {
+        logger.i(event.userName);
         emit(LoginLoadingState());
         final response = await apiService.getLoginDetail(
             event.userName, event.userPassword, event.userToken);
@@ -26,6 +28,7 @@ class LoginBloc extends Bloc<LoginButtonClickEvent, LoginApiState> {
               loginModel: response));
         }
       } catch (e) {
+        logger.i(e);
         emit(LoginErrorState(isError: true, message: e.toString()));
       }
     });

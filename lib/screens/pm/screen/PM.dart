@@ -34,8 +34,8 @@ class _PMState extends State<PM> {
       }
 
       final empType = employeeType?.replaceAll("/", " ") ?? "";
-      // url = 'https://iots.aurolab.com/FixItNow/pm/app/$loginId/$empType';
-      url = 'http://192.168.1.220:4200/pm/app/$loginId/$empType';
+      url = 'https://iots.aurolab.com/FixItNow/pm/app/$loginId/$empType';
+      // url = 'http://192.168.1.220:4200/pm/app/$loginId/$empType';
 
       logger.f(url);
       // controller = WebViewController()

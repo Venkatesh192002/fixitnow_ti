@@ -76,7 +76,7 @@ class TicketRepository {
       'user_login_id': LoginId,
       'comment': comment
     };
-    // logger.f(body);
+    logger.f(body);
     ticketProvider.isLoading = true;
     ResponseData response =
         await APIService().post(context, "create_ticket/", body: body);

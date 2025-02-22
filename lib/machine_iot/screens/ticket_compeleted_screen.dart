@@ -176,7 +176,7 @@ class _TicketCompletedScreenState extends ConsumerState<TicketCompletedScreen> {
                                                       breakdownDetail.status ??
                                                           "",
                                                   ticketNumber:
-                                                      widget.ticketNumber)));
+                                                      widget.ticketNumber, ticketFrom: breakdownDetail.ticketFrom??"",)));
                                 },
                                 icon: const Icon(Icons.article_outlined),
                                 color: Color.fromRGBO(30, 152, 165, 1),

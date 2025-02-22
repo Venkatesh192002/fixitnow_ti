@@ -4,19 +4,21 @@ import 'package:auscurator/api_service/api_service.dart';
 import 'package:auscurator/api_service_myconcept/keys.dart';
 import 'package:auscurator/components/no_data_animation.dart';
 import 'package:auscurator/machine_iot/screens/custom_search_dialog.dart';
+import 'package:auscurator/machine_iot/screens/why_why_screen.dart';
 import 'package:auscurator/machine_iot/util.dart';
 import 'package:auscurator/machine_iot/widget/shimmer_effect.dart';
 import 'package:auscurator/model/TicketDetailModel.dart';
 import 'package:auscurator/model/root_cause_model.dart';
 import 'package:auscurator/provider/all_provider.dart';
 import 'package:auscurator/provider/breakkdown_provider.dart';
+import 'package:auscurator/repository/breakdown_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SolutionBankEditScreen extends StatefulWidget {
   const SolutionBankEditScreen(
-      {super.key, required this.ticketNumber, this.status});
-  final String ticketNumber;
+      {super.key, required this.ticketNumber, this.status, required this.ticketFrom});
+  final String ticketNumber,ticketFrom;
   final String? status;
 
   @override
@@ -30,8 +32,8 @@ class _SolutionBankEditScreenState extends State<SolutionBankEditScreen> {
 
   // TextEditingControllers for Root Cause, Solution, and Remark
   TextEditingController rootCauseController = TextEditingController();
-  late TextEditingController solutionController;
-  late TextEditingController remarkController;
+   TextEditingController solutionController = TextEditingController();
+   TextEditingController remarkController = TextEditingController();
 
   @override
   void initState() {
@@ -50,7 +52,7 @@ class _SolutionBankEditScreenState extends State<SolutionBankEditScreen> {
           )
         : null;
     logger.e(rootCause?.toJson());
-    rootCauseController.text =
+    rootCauseController.text =rootCause?.rootCauseCode==null||rootCause?.rootCauseName==null?"":
         "${rootCause?.rootCauseCode} - ${rootCause?.rootCauseName}";
 
     // Initialize 5 controllers for Why and Answer pairs
@@ -59,13 +61,14 @@ class _SolutionBankEditScreenState extends State<SolutionBankEditScreen> {
       answerControllers.add(TextEditingController());
     }
 
-    // Initialize other controllers
-    solutionController = TextEditingController();
-    remarkController = TextEditingController();
     super.initState();
   }
 
   String selectedRootCauseId = "";
+  String selectedAbnormality = "";
+   TextEditingController abnormalityController = TextEditingController();
+
+
 
   @override
   void dispose() {
@@ -77,6 +80,7 @@ class _SolutionBankEditScreenState extends State<SolutionBankEditScreen> {
       controller.dispose();
     }
     rootCauseController.dispose();
+    abnormalityController.dispose();
     solutionController.dispose();
     remarkController.dispose();
     super.dispose();
@@ -100,6 +104,7 @@ class _SolutionBankEditScreenState extends State<SolutionBankEditScreen> {
         BreakdownDetailList breakdownDetail =
             break1.ticketDetailData?.breakdownDetailList?[0] ??
                 BreakdownDetailList();
+                logger.e(breakdownDetail.toJson());
         // Update controllers with data from API
         whyControllers[0].text = breakdownDetail.why1 ?? '';
         answerControllers[0].text = breakdownDetail.action1 ?? '';
@@ -114,17 +119,19 @@ class _SolutionBankEditScreenState extends State<SolutionBankEditScreen> {
         if (widget.status == "Fixed") {
           rootCauseController.text = breakdownDetail.rootCause ?? '';
         } else {
-          // try {
-          //   var rootCause = breakProvider.rootCauseData?.rootCauseLists
-          //       .firstWhere((e) =>
-          //           "${e.refId}" ==
-          //           "${breakdownDetail.rootCauseId}");
-          //   logger.e(rootCause?.toJson());
-          //   rootCauseController.text =
-          //       "${rootCause?.rootCauseCode} - ${rootCause?.rootCauseName}";
-          // } catch (e) {
-          //   logger.e("No matching RootCauseList found.");
-          // }
+          try {
+            var rootCause = breakProvider.rootCauseData?.rootCauseLists
+                .firstWhere((e) =>
+                    "${e.refId}" ==
+                    "${breakdownDetail.rootCauseId}");
+            logger.e(rootCause?.toJson());
+            rootCauseController.text =
+                "${rootCause?.rootCauseCode} - ${rootCause?.rootCauseName}";
+
+                selectedRootCauseId="${rootCause?.refId}";
+          } catch (e) {
+            // logger.e("No matching RootCauseList found.");
+          }
         }
         solutionController.text = breakdownDetail.solution ?? '';
         remarkController.text = breakdownDetail.remarks ?? '';
@@ -340,6 +347,45 @@ class _SolutionBankEditScreenState extends State<SolutionBankEditScreen> {
                           ],
                           _buildTextField(solutionController, 'Solution*'),
                           _buildTextField(remarkController, 'Remark'),
+                          if (widget.ticketFrom != "CMMS") ...[
+                            SizedBox(height: 10),
+                            TextField(
+                              controller: abnormalityController,
+                              decoration: InputDecoration(
+                                  labelText: "Abnormality Due To",
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        color: Colors.transparent),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          color: Colors.transparent),
+                                      borderRadius: BorderRadius.circular(20))),
+                              readOnly: true,
+                              onTap: () async {
+                                // Show the CustomSearchDialog and get the selected asset
+                                final result = await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomAbnormalityDialog();
+                                  },
+                                );
+                                // Check if a result was returned
+                                if (result != null) {
+                                  logger.i(result);
+                                  abnormalityController.text =
+                                      capitalizeFirstLetter(
+                                          "${result["value"]}");
+                                  selectedAbnormality =
+                                      result["value"].toString();
+                                  setState(() {}); // Force UI update
+                                }
+                              },
+                            ),
+                          ],
                           const SizedBox(height: 20),
                           widget.status == "Fixed"
                               ? SizedBox.shrink()
@@ -366,6 +412,7 @@ class _SolutionBankEditScreenState extends State<SolutionBankEditScreen> {
                                           .then((value) {
                                         if (value.isError == false) {}
                                         Navigator.of(context).pop();
+                                        BreakdownRepository().getBreakDownDetailList(context,ticket_no: widget.ticketNumber.toString());
                                         showMessage(
                                             context: context,
                                             isError: value.isError!,
@@ -437,7 +484,8 @@ class _SolutionBankEditScreenState extends State<SolutionBankEditScreen> {
       "issue": remarkController.text,
       "root_cause": selectedRootCauseId,
       "solution": solutionController.text,
-      "remark": remarkController.text
+      "remark": remarkController.text,
+      "abnormality_due_to": selectedAbnormality
     };
 
     return jsonEncode([data]);

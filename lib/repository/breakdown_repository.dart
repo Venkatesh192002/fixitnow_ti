@@ -31,7 +31,6 @@ class BreakdownRepository {
     breakProvider.isLoading = false;
     if (response.hasError(context)) return false;
     final jsonObj = response.data;
-    logger.i(jsonObj);
     breakProvider.ticketDetailData = TicketDetailModel.fromJson(jsonObj);
 
     // String message = response.data['message'] ?? '';

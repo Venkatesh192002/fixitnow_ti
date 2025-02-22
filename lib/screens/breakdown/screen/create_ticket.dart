@@ -304,6 +304,7 @@ class _CreateTicketScreenState extends State<CreateTicketScreen> {
                                     result.breakdownSubCategory.toString();
                                 selectedSubCategoryId =
                                     result.breakdownSubCategoryId.toString();
+                                    logger.f(selectedSubCategoryId);
                                 logger.e(result.toJson());
                               });
                               print(
