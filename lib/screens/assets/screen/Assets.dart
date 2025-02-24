@@ -2,6 +2,7 @@
 
 import 'package:animate_do/animate_do.dart';
 import 'package:auscurator/api_service/api_service.dart';
+import 'package:auscurator/api_service_myconcept/keys.dart';
 import 'package:auscurator/components/no_data_animation.dart';
 import 'package:auscurator/machine_iot/screens/VideoPlayerScreen.dart';
 import 'package:auscurator/machine_iot/section_bottom_sheet/widget/equipment_spinner_bloc/model/AssetModel.dart';
@@ -9,6 +10,7 @@ import 'package:auscurator/machine_iot/widget/shimmer_effect.dart';
 import 'package:auscurator/main.dart';
 import 'package:auscurator/model/AssetGroupModel.dart';
 import 'package:auscurator/screens/assets/widgets/pdf_view_screen.dart';
+import 'package:auscurator/widgets/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -165,6 +167,9 @@ class _AssetsState extends ConsumerState {
               physics: ClampingScrollPhysics(),
               itemCount: assetGroupList.length,
               itemBuilder: (context, groupIndex) {
+                logger.w( assetGroupList[18]
+                                                .assetGroupCode
+                                                .toString());
                 double isTab() {
                   if (isTablet) {
                     return expandedGroupState[groupIndex] ? 340 : 114;
@@ -216,9 +221,7 @@ class _AssetsState extends ConsumerState {
                                             style: TextStyle(
                                               fontFamily: "Mulish",
                                               fontWeight: FontWeight.bold,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onPrimary,
+                                              color: Palette.primary,
                                             ),
                                           ),
                                           const SizedBox(height: 5),

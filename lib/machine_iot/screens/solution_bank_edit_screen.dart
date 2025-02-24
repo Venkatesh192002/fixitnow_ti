@@ -55,6 +55,20 @@ class _SolutionBankEditScreenState extends State<SolutionBankEditScreen> {
     rootCauseController.text =rootCause?.rootCauseCode==null||rootCause?.rootCauseName==null?"":
         "${rootCause?.rootCauseCode} - ${rootCause?.rootCauseName}";
 
+try {
+            var rootCause = breakProvider.rootCauseData?.rootCauseLists
+                .firstWhere((e) =>
+                    "${e.refId}" ==
+                    "${breakProvider.ticketDetailData?.breakdownDetailList?[0].rootCauseId}");
+            logger.e(rootCause?.toJson());
+            rootCauseController.text =
+                "${rootCause?.rootCauseCode} - ${rootCause?.rootCauseName}";
+
+                selectedRootCauseId="${rootCause?.refId}";
+          } catch (e) {
+            // logger.e("No matching RootCauseList found.");
+          }
+
     // Initialize 5 controllers for Why and Answer pairs
     for (int i = 0; i < 5; i++) {
       whyControllers.add(TextEditingController());
@@ -118,21 +132,7 @@ class _SolutionBankEditScreenState extends State<SolutionBankEditScreen> {
         answerControllers[4].text = breakdownDetail.action5 ?? '';
         if (widget.status == "Fixed") {
           rootCauseController.text = breakdownDetail.rootCause ?? '';
-        } else {
-          try {
-            var rootCause = breakProvider.rootCauseData?.rootCauseLists
-                .firstWhere((e) =>
-                    "${e.refId}" ==
-                    "${breakdownDetail.rootCauseId}");
-            logger.e(rootCause?.toJson());
-            rootCauseController.text =
-                "${rootCause?.rootCauseCode} - ${rootCause?.rootCauseName}";
-
-                selectedRootCauseId="${rootCause?.refId}";
-          } catch (e) {
-            // logger.e("No matching RootCauseList found.");
-          }
-        }
+        } 
         solutionController.text = breakdownDetail.solution ?? '';
         remarkController.text = breakdownDetail.remarks ?? '';
         return Scaffold(

@@ -20,7 +20,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:auscurator/splash_screen/splash_screen.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:upgrader/upgrader.dart';
 
 GlobalKey<NavigatorState> navigationKey = GlobalKey<NavigatorState>();
 
@@ -51,6 +53,17 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         message.notification!.body.toString(), formattedDateTime.toString()),
   );
 }
+
+
+Future<void> checkForUpdates() async {
+  InAppUpdate.checkForUpdate().then((info) {
+    if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+      InAppUpdate.performImmediateUpdate()
+          .catchError((e) => print("Update Error: $e"));
+    }
+  }).catchError((e) => print("Update Check Error: $e"));
+}
+
 
 checkConnection(BuildContext context) async {
   await Connectivity().checkConnectivity().then((value) {
@@ -116,6 +129,8 @@ Future<void> main() async {
   } catch (e) {
     print("Firebase is already initialized");
   }
+
+  await checkForUpdates();
 
   await FirebaseMessaging.instance.requestPermission(
     alert: true,
@@ -240,7 +255,11 @@ Future<void> main() async {
                 titleMedium: GoogleFonts.poppins(fontWeight: FontWeight.w500),
               ),
             ),
-            home: const SplashScreen(),
+            home: UpgradeAlert(
+              showIgnore: true,
+              showLater: true,
+              child: const SplashScreen(), // Show upgrade prompt on the splash screen
+            ),
           ),
         ),
       ),
