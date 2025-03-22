@@ -37,13 +37,14 @@ class TicketInfoCardWidget extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: Text(
-            "${value}",
+            value.isNotEmpty == true ? value : "--",
             overflow: TextOverflow.ellipsis,
             maxLines: 2,
             style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                fontFamily: "Mulish",
-                fontSize: 14),
+              fontWeight: FontWeight.w500,
+              fontFamily: "Mulish",
+              fontSize: 14,
+            ),
           ),
         ),
       ],

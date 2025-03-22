@@ -6,6 +6,7 @@ import 'package:auscurator/machine_iot/section_bottom_sheet/widget/equipment_spi
 import 'package:auscurator/model/AssetGroupModel.dart';
 import 'package:auscurator/model/asset_engineer_id.dart';
 import 'package:auscurator/model/asset_head_engineer_model.dart';
+import 'package:auscurator/model/employee_engineer_model.dart';
 import 'package:auscurator/provider/all_provider.dart';
 import 'package:auscurator/util/shared_util.dart';
 import 'package:flutter/material.dart';
@@ -88,10 +89,12 @@ class AssetRepository {
       "status": "active"
     };
 
+    logger.d(input);
     assetProvider.isLoading = true;
     ResponseData response =
         await APIService().post(context, "assetLists/", body: input);
 
+    logger.d(response.data);
     assetProvider.isLoading = false;
     if (response.hasError(context)) return false;
     final jsonObj = response.data;
@@ -108,16 +111,46 @@ class AssetRepository {
     final LoginId = SharedUtil().getLoginId;
 
     final input = {"employee_id": LoginId, "status": "active"};
-    // logger.d(input);
+    logger.d(input);
     assetProvider.isLoading = true;
     ResponseData response = await APIService()
         .post(context, "department_engineerLists/", body: input);
     assetProvider.isLoading = false;
     if (response.hasError(context)) return false;
     final jsonObj = response.data;
-    // logger.d(jsonObj);
+    logger.d(jsonObj);
 
     assetProvider.assetEngId = AssetEngIdModel.fromJson(jsonObj);
+
+    // String message = response.data['message'] ?? '';
+    // if (message.isNotEmpty)
+    //   showMessage(context: context, isError: true, responseMessage: message);
+    return true;
+  }
+
+  Future<bool> getOverallEngineer(BuildContext context,
+      {required String companyId,
+      required String buId,
+      required String plantId,
+      required String deptId}) async {
+    final body = {
+      'company_id': companyId,
+      'bu_id': buId,
+      'plant_id': plantId,
+      "is_engineer": "yes",
+      'status': 'active'
+    };
+
+    logger.d(body);
+    assetProvider.isLoading = true;
+    ResponseData response =
+        await APIService().post(context, "employeeLists/", body: body);
+    assetProvider.isLoading = false;
+    if (response.hasError(context)) return false;
+    final jsonObj = response.data;
+    logger.d(jsonObj);
+
+    assetProvider.overallEngineerId = EmployeeEngineerModel.fromJson(jsonObj);
 
     // String message = response.data['message'] ?? '';
     // if (message.isNotEmpty)

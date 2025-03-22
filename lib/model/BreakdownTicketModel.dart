@@ -1,4 +1,3 @@
-
 class BreakkdownTicketModel {
   bool? isError;
   String? message;
@@ -53,7 +52,6 @@ class BreakdownDetailList {
   int? id;
   String? millDate;
   String? millShift;
-  String? planDate;
   int? plantId;
   int? departmentId;
   int? assetGroupId;
@@ -146,9 +144,17 @@ class BreakdownDetailList {
   String? reassignTime3;
   int? reopenBy;
   int? assignBy;
-  int? escalation;
   String? ticketFrom;
   int? assetPartsId;
+  int? engineerCompletion;
+  String? reopenTime;
+  String? approvalComment;
+  String? approvalState;
+  int? headResponseTime;
+  int? headResponseCount;
+  int? engineerResponseTime;
+  int? engineerResponseCount;
+  String? lastHeadResponseTime;
   String? company;
   String? bu;
   String? plant;
@@ -165,12 +171,13 @@ class BreakdownDetailList {
   String? partName;
   String? partMake;
   String? partSno;
+  int? downtimeDuration;
+  String? rootCauseId;
 
   BreakdownDetailList(
       {this.id,
       this.millDate,
       this.millShift,
-      this.planDate,
       this.plantId,
       this.departmentId,
       this.assetGroupId,
@@ -263,9 +270,17 @@ class BreakdownDetailList {
       this.reassignTime3,
       this.reopenBy,
       this.assignBy,
-      this.escalation,
       this.ticketFrom,
       this.assetPartsId,
+      this.engineerCompletion,
+      this.reopenTime,
+      this.approvalComment,
+      this.approvalState,
+      this.headResponseTime,
+      this.headResponseCount,
+      this.engineerResponseTime,
+      this.engineerResponseCount,
+      this.lastHeadResponseTime,
       this.company,
       this.bu,
       this.plant,
@@ -281,13 +296,14 @@ class BreakdownDetailList {
       this.createdById,
       this.partName,
       this.partMake,
-      this.partSno});
+      this.partSno,
+      this.downtimeDuration,
+      this.rootCauseId});
 
   BreakdownDetailList.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     millDate = json['mill_date'];
     millShift = json['mill_shift'];
-    millShift = json['planned_date'];
     plantId = json['plant_id'];
     departmentId = json['department_id'];
     assetGroupId = json['asset_group_id'];
@@ -380,9 +396,17 @@ class BreakdownDetailList {
     reassignTime3 = json['reassign_time_3'];
     reopenBy = json['reopen_by'];
     assignBy = json['assign_by'];
-    escalation = json['escalation'];
     ticketFrom = json['ticket_from'];
     assetPartsId = json['asset_parts_id'];
+    engineerCompletion = json['engineer_completion'];
+    reopenTime = json['reopen_time'];
+    approvalComment = json['approval_comment'];
+    approvalState = json['approval_state'];
+    headResponseTime = json['head_response_time'];
+    headResponseCount = json['head_response_count'];
+    engineerResponseTime = json['engineer_response_time'];
+    engineerResponseCount = json['engineer_response_count'];
+    lastHeadResponseTime = json['last_head_response_time'];
     company = json['company'];
     bu = json['bu'];
     plant = json['plant'];
@@ -399,6 +423,8 @@ class BreakdownDetailList {
     partName = json['part_name'];
     partMake = json['part_make'];
     partSno = json['part_sno'];
+    downtimeDuration = json['downtime_duration'];
+    rootCauseId = json['root_cause_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -406,7 +432,6 @@ class BreakdownDetailList {
     data['id'] = this.id;
     data['mill_date'] = this.millDate;
     data['mill_shift'] = this.millShift;
-    data['planned_date'] = this.planDate;
     data['plant_id'] = this.plantId;
     data['department_id'] = this.departmentId;
     data['asset_group_id'] = this.assetGroupId;
@@ -499,9 +524,17 @@ class BreakdownDetailList {
     data['reassign_time_3'] = this.reassignTime3;
     data['reopen_by'] = this.reopenBy;
     data['assign_by'] = this.assignBy;
-    data['escalation'] = this.escalation;
     data['ticket_from'] = this.ticketFrom;
     data['asset_parts_id'] = this.assetPartsId;
+    data['engineer_completion'] = this.engineerCompletion;
+    data['reopen_time'] = this.reopenTime;
+    data['approval_comment'] = this.approvalComment;
+    data['approval_state'] = this.approvalState;
+    data['head_response_time'] = this.headResponseTime;
+    data['head_response_count'] = this.headResponseCount;
+    data['engineer_response_time'] = this.engineerResponseTime;
+    data['engineer_response_count'] = this.engineerResponseCount;
+    data['last_head_response_time'] = this.lastHeadResponseTime;
     data['company'] = this.company;
     data['bu'] = this.bu;
     data['plant'] = this.plant;
@@ -518,49 +551,55 @@ class BreakdownDetailList {
     data['part_name'] = this.partName;
     data['part_make'] = this.partMake;
     data['part_sno'] = this.partSno;
+    data['downtime_duration'] = this.downtimeDuration;
+    data['root_cause_id'] = this.rootCauseId;
     return data;
   }
 }
 
 class BreakdownListCount {
+  int? assigned;
   int? open;
   int? onProgress;
   int? accepted;
   int? acknowledge;
-  // int? rca;
-  int? assigned;
+  int? rca;
+  int? approvalMfg;
   int? holdPending;
   int? closed;
 
   BreakdownListCount(
-      {this.open,
+      {this.assigned,
+      this.open,
       this.onProgress,
       this.accepted,
       this.acknowledge,
-      // this.rca,
-      this.assigned,
+      this.rca,
+      this.approvalMfg,
       this.holdPending,
       this.closed});
 
   BreakdownListCount.fromJson(Map<String, dynamic> json) {
+    assigned = json['assigned'];
     open = json['open'];
     onProgress = json['on_progress'];
     accepted = json['accepted'];
     acknowledge = json['acknowledge'];
-    // rca = json['rca'];
-    assigned = json['assigned'];
+    rca = json['rca'];
+    approvalMfg = json['approval_mfg'];
     holdPending = json['hold_pending'];
     closed = json['closed'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['assigned'] = this.assigned;
     data['open'] = this.open;
     data['on_progress'] = this.onProgress;
     data['accepted'] = this.accepted;
     data['acknowledge'] = this.acknowledge;
-    // data['rca'] = this.rca;
-    data['assigned'] = this.assigned;
+    data['rca'] = this.rca;
+    data['approval_mfg'] = this.approvalMfg;
     data['hold_pending'] = this.holdPending;
     data['closed'] = this.closed;
     return data;

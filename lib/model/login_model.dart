@@ -177,20 +177,20 @@ class LoginModel {
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {
-        data!.add(Data.fromJson(v));
+        data!.add(new Data.fromJson(v));
       });
     }
     shield = json['shield'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['is_error'] = isError;
-    data['message'] = message;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['is_error'] = this.isError;
+    data['message'] = this.message;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['shield'] = shield;
+    data['shield'] = this.shield;
     return data;
   }
 }
@@ -213,7 +213,6 @@ class Data {
   int? createdBy;
   String? modifiedOn;
   int? modifiedBy;
-  int? companyId;
   int? buId;
   int? plantId;
   int? departmentId;
@@ -224,6 +223,8 @@ class Data {
   int? locationId;
   int? subUser;
   String? isAssigned;
+  String? userAvailability;
+  List<int>? companyId;
   int? loginId;
   String? token;
   String? companyCode;
@@ -237,6 +238,9 @@ class Data {
   String? locationCode;
   String? locationName;
   String? employeeImageUrl;
+  int? usersCount;
+  String? isTrial;
+  String? trialDate;
 
   Data(
       {this.employeeId,
@@ -256,7 +260,6 @@ class Data {
       this.createdBy,
       this.modifiedOn,
       this.modifiedBy,
-      this.companyId,
       this.buId,
       this.plantId,
       this.departmentId,
@@ -267,6 +270,8 @@ class Data {
       this.locationId,
       this.subUser,
       this.isAssigned,
+      this.userAvailability,
+      this.companyId,
       this.loginId,
       this.token,
       this.companyCode,
@@ -279,7 +284,10 @@ class Data {
       this.departmentName,
       this.locationCode,
       this.locationName,
-      this.employeeImageUrl});
+      this.employeeImageUrl,
+      this.usersCount,
+      this.isTrial,
+      this.trialDate});
 
   Data.fromJson(Map<String, dynamic> json) {
     employeeId = json['employee_id'];
@@ -299,7 +307,6 @@ class Data {
     createdBy = json['created_by'];
     modifiedOn = json['modified_on'];
     modifiedBy = json['modified_by'];
-    companyId = json['company_id'];
     buId = json['bu_id'];
     plantId = json['plant_id'];
     departmentId = json['department_id'];
@@ -310,6 +317,8 @@ class Data {
     locationId = json['location_id'];
     subUser = json['sub_user'];
     isAssigned = json['is_assigned'];
+    userAvailability = json['user_availability'];
+    companyId = json['company_id'].cast<int>();
     loginId = json['login_id'];
     token = json['token'];
     companyCode = json['company_code'];
@@ -323,51 +332,58 @@ class Data {
     locationCode = json['location_code'];
     locationName = json['location_name'];
     employeeImageUrl = json['employee_image_url'];
+    usersCount = json['users_count'];
+    isTrial = json['is_trial'];
+    trialDate = json['trial_date'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['employee_id'] = employeeId;
-    data['designation_id'] = designationId;
-    data['employee_code'] = employeeCode;
-    data['employee_name'] = employeeName;
-    data['employee_type'] = employeeType;
-    data['employee_email'] = employeeEmail;
-    data['employee_mobile'] = employeeMobile;
-    data['employee_skill'] = employeeSkill;
-    data['employee_address'] = employeeAddress;
-    data['user_name'] = userName;
-    data['employee_image'] = employeeImage;
-    data['is_login'] = isLogin;
-    data['status'] = status;
-    data['created_on'] = createdOn;
-    data['created_by'] = createdBy;
-    data['modified_on'] = modifiedOn;
-    data['modified_by'] = modifiedBy;
-    data['company_id'] = companyId;
-    data['bu_id'] = buId;
-    data['plant_id'] = plantId;
-    data['department_id'] = departmentId;
-    data['employee_gender'] = employeeGender;
-    data['employee_level'] = employeeLevel;
-    data['employee_reportee'] = employeeReportee;
-    data['is_engineer'] = isEngineer;
-    data['location_id'] = locationId;
-    data['sub_user'] = subUser;
-    data['is_assigned'] = isAssigned;
-    data['login_id'] = loginId;
-    data['token'] = token;
-    data['company_code'] = companyCode;
-    data['company_name'] = companyName;
-    data['bu_code'] = buCode;
-    data['bu_name'] = buName;
-    data['plant_code'] = plantCode;
-    data['plant_name'] = plantName;
-    data['department_code'] = departmentCode;
-    data['department_name'] = departmentName;
-    data['location_code'] = locationCode;
-    data['location_name'] = locationName;
-    data['employee_image_url'] = employeeImageUrl;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['employee_id'] = this.employeeId;
+    data['designation_id'] = this.designationId;
+    data['employee_code'] = this.employeeCode;
+    data['employee_name'] = this.employeeName;
+    data['employee_type'] = this.employeeType;
+    data['employee_email'] = this.employeeEmail;
+    data['employee_mobile'] = this.employeeMobile;
+    data['employee_skill'] = this.employeeSkill;
+    data['employee_address'] = this.employeeAddress;
+    data['user_name'] = this.userName;
+    data['employee_image'] = this.employeeImage;
+    data['is_login'] = this.isLogin;
+    data['status'] = this.status;
+    data['created_on'] = this.createdOn;
+    data['created_by'] = this.createdBy;
+    data['modified_on'] = this.modifiedOn;
+    data['modified_by'] = this.modifiedBy;
+    data['bu_id'] = this.buId;
+    data['plant_id'] = this.plantId;
+    data['department_id'] = this.departmentId;
+    data['employee_gender'] = this.employeeGender;
+    data['employee_level'] = this.employeeLevel;
+    data['employee_reportee'] = this.employeeReportee;
+    data['is_engineer'] = this.isEngineer;
+    data['location_id'] = this.locationId;
+    data['sub_user'] = this.subUser;
+    data['is_assigned'] = this.isAssigned;
+    data['user_availability'] = this.userAvailability;
+    data['company_id'] = this.companyId;
+    data['login_id'] = this.loginId;
+    data['token'] = this.token;
+    data['company_code'] = this.companyCode;
+    data['company_name'] = this.companyName;
+    data['bu_code'] = this.buCode;
+    data['bu_name'] = this.buName;
+    data['plant_code'] = this.plantCode;
+    data['plant_name'] = this.plantName;
+    data['department_code'] = this.departmentCode;
+    data['department_name'] = this.departmentName;
+    data['location_code'] = this.locationCode;
+    data['location_name'] = this.locationName;
+    data['employee_image_url'] = this.employeeImageUrl;
+    data['users_count'] = this.usersCount;
+    data['is_trial'] = this.isTrial;
+    data['trial_date'] = this.trialDate;
     return data;
   }
 }

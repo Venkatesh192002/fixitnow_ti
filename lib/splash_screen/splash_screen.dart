@@ -57,14 +57,11 @@ class _SplashScreenState extends State<SplashScreen>
     final isFirstRun = prefs.getBool('isFirstRun') ?? true;
 
     if (isFirstRun) {
-      // Clear the cache only during the first run
       final cacheDir = await getTemporaryDirectory();
       if (cacheDir.existsSync()) {
-        cacheDir.deleteSync(recursive: true); // Deletes the cache directory
-        print('Cache cleared on first install.');
+        cacheDir.deleteSync(recursive: true); 
       }
 
-      // Mark as not the first run anymore
       await prefs.setBool('isFirstRun', false);
     } else {
       logger.i('Not the first install. Cache not cleared.');
@@ -76,12 +73,7 @@ class _SplashScreenState extends State<SplashScreen>
       if (status == AnimationStatus.completed) {
         Future.delayed(const Duration(seconds: 1), () {
           String isUserLoggedIn = SharedUtil().getIsUserLogin ?? '';
-          logger.e(isUserLoggedIn);
-          print('login -> $isUserLoggedIn');
           if (isUserLoggedIn == "") {
-            // If the user is not logged in, navigate to LoginScreen
-
-            // If the user is not logged in, navigate to LoginScreen
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) => const LoginScreen(),

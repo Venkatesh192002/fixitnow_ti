@@ -1,11 +1,11 @@
 import 'package:auscurator/api_service_myconcept/api_service_new.dart';
+import 'package:auscurator/api_service_myconcept/keys.dart';
 import 'package:auscurator/api_service_myconcept/response.dart';
 import 'package:auscurator/api_service_myconcept/response_extension.dart';
 import 'package:auscurator/model/BreakdownTicketModel.dart';
 import 'package:auscurator/model/MainCategoryModel.dart';
 import 'package:auscurator/model/SubCategoryModel.dart';
 import 'package:auscurator/model/TicketDetailModel.dart';
-import 'package:auscurator/model/root_cause_model.dart';
 import 'package:auscurator/provider/all_provider.dart';
 import 'package:auscurator/util/shared_util.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,11 +24,13 @@ class BreakdownRepository {
       'to_date': '',
       'user_login_id': LoginId
     };
+    logger.e(body);
     breakProvider.isLoading = true;
     ResponseData response = await APIService()
         .post(context, "get_breakdown_detail_list/", body: body);
     breakProvider.isLoading = false;
     if (response.hasError(context)) return false;
+    logger.e(response.data);
     final jsonObj = response.data;
     breakProvider.ticketDetailData = TicketDetailModel.fromJson(jsonObj);
 
@@ -169,10 +171,10 @@ class BreakdownRepository {
         await APIService().post(context, "root_causeLists/", body: body);
     breakProvider.isLoading = false;
     if (response.hasError(context)) return false;
-    final jsonObj = response.data;
+    // final jsonObj = response.data;
     // logger.i(jsonObj);
 
-    breakProvider.rootCauseData = RootCauseModel.fromJson(jsonObj);
+    // breakProvider.rootCauseData = RootCauseModel.fromJson(jsonObj);
     // String message = response.data['message'] ?? '';
     // if (message.isNotEmpty)
     //   showMessage(context: context, isError: true, responseMessage: message);

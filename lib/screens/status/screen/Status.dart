@@ -34,7 +34,7 @@ class _StatusState extends ConsumerState {
   }
 
   void filterItems() {
-    setState(() {}); // Trigger a rebuild to filter in the UI
+    setState(() {}); 
   }
 
   @override
@@ -102,7 +102,6 @@ class _StatusState extends ConsumerState {
                 );
               }
 
-              // Apply search filter to the asset list
               List<EmployeeLists> assetList = snapshot.data!.employeeLists!;
               if (searchController.text.isNotEmpty) {
                 assetList = assetList

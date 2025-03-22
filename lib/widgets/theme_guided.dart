@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:auscurator/widgets/palette.dart';
 import 'package:auscurator/widgets/size_unit.dart';
 import 'package:flutter/material.dart';

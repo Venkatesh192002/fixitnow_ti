@@ -34,6 +34,7 @@ class MediaPicker extends StatelessWidget {
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       Container(
         decoration: BoxDecoration(
+            // ignore: deprecated_member_use
             color: Palette.primary.withOpacity(.3), shape: BoxShape.circle),
         child: const Padding(
           padding: EdgeInsets.all(SizeUnit.md),

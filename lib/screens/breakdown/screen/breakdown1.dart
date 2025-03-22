@@ -1,12 +1,11 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:auscurator/api_service/api_service.dart';
 import 'package:auscurator/components/no_data_animation.dart';
 import 'package:auscurator/machine_iot/screens/MainCategoryDialog.dart';
 import 'package:auscurator/machine_iot/screens/SubCategoryDialog.dart';
-import 'package:auscurator/machine_iot/screens/TicketAcceptScreen.dart';
-import 'package:auscurator/machine_iot/screens/TicketDetailsScreen.dart';
+import 'package:auscurator/machine_iot/screens/all_ticket_details.dart';
 import 'package:auscurator/machine_iot/screens/custom_search_dialog.dart';
-import 'package:auscurator/machine_iot/screens/ticket_checkin_screen.dart';
-import 'package:auscurator/machine_iot/screens/ticket_compeleted_screen.dart';
 import 'package:auscurator/machine_iot/section_bottom_sheet/widget/elevated_button_widget.dart';
 import 'package:auscurator/machine_iot/section_bottom_sheet/widget/equipment_spinner_bloc/model/AssetModel.dart';
 import 'package:auscurator/machine_iot/util.dart';
@@ -20,17 +19,20 @@ import 'package:auscurator/model/SubCategoryModel.dart';
 import 'package:auscurator/provider/all_provider.dart';
 import 'package:auscurator/provider/breakkdown_provider.dart';
 import 'package:auscurator/provider/ticket_provider.dart';
-import 'package:auscurator/repository/asset_repository.dart';
 import 'package:auscurator/repository/breakdown_repository.dart';
 import 'package:auscurator/repository/ticket_repository.dart';
 import 'package:auscurator/screens/breakdown/screen/create_ticket.dart';
+import 'package:auscurator/screens/breakdown/widgets/accept_dialog.dart';
 import 'package:auscurator/screens/breakdown/widgets/date_time_picker.dart';
 import 'package:auscurator/screens/breakdown/widgets/segmented_priority.dart';
 import 'package:auscurator/util/shared_util.dart';
 import 'package:auscurator/widgets/bottom_sheet.dart';
 import 'package:auscurator/widgets/context_extension.dart';
+import 'package:auscurator/widgets/dialogs.dart';
 import 'package:auscurator/widgets/loaders.dart';
+import 'package:auscurator/widgets/space.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -49,28 +51,30 @@ DateTime? fromDate;
 DateTime? toDate;
 
 List<String> statusList = [
-  'Open',
+  // 'Open',
   'Assigned',
   'Accepted',
-  'On Progress',
+  'In Progress',
   'Pending',
-  // 'Await RCA',
+  'Await RCA',
+  'Approval of MFG',
   'Acknowledge',
   'Closed'
 ];
 // Corresponding API keys for counts
 List<String> apiKeys = [
-  'Open',
+  // 'Open',
   'Assigned',
   'Accepted',
   'On_Progress',
   'Hold_Pending',
-  // 'rca',
+  'rca',
+  'approval_mfg',
   'Acknowledge',
   'Closed'
 ];
 
-List<int> counts = List.filled(7, 0);
+List<int> counts = List.filled(8, 0);
 
 int selectedIndex = 0;
 
@@ -81,8 +85,8 @@ String dropdownValue = 'Ascending';
 String selectedSortOption = 'Date and Time';
 Future<BreakkdownTicketModel>? companyFuture;
 // bool _isFirstLoad = true;
-
-String selectedPriority = 'Low';
+bool isSearching = false;
+String selectedPriority = 'Medium';
 String selectedStatus = '1';
 
 class _Breakdown1State extends State<Breakdown1> {
@@ -103,12 +107,11 @@ class _Breakdown1State extends State<Breakdown1> {
             : '', // Default or selected date
         user_login_id: '',
       );
-      TicketRepository().getAssetEquipmentList(context);
+      // TicketRepository().getAssetEquipmentList(context);
       BreakdownRepository().getListOfBreadownSub(context);
-      BreakdownRepository().getRootCauseList(context);
-
+      // BreakdownRepository().getRootCauseList(context);
       BreakdownRepository().getListOfIssue(context);
-      AssetRepository().getListOfEquipment(context, assetGroupId: "");
+      // AssetRepository().getListOfEquipment(context, assetGroupId: "");
     });
     checkConnection(context);
     searchController.addListener(() {
@@ -156,13 +159,15 @@ class _Breakdown1State extends State<Breakdown1> {
 
         // Update counts in the state
         // setState(() {
-        counts[0] = countData.open ?? 0;
-        counts[1] = countData.assigned ?? 0;
-        counts[2] = countData.accepted ?? 0;
-        counts[3] = countData.onProgress ?? 0;
-        counts[4] = countData.holdPending ?? 0;
-        counts[5] = countData.acknowledge ?? 0;
-        counts[6] = countData.closed ?? 0;
+        // counts[0] = countData.open ?? 0;
+        counts[0] = countData.assigned ?? 0;
+        counts[1] = countData.accepted ?? 0;
+        counts[2] = countData.onProgress ?? 0;
+        counts[3] = countData.holdPending ?? 0;
+        counts[4] = countData.rca ?? 0;
+        counts[5] = countData.approvalMfg ?? 0;
+        counts[6] = countData.acknowledge ?? 0;
+        counts[7] = countData.closed ?? 0;
         // counts[5] = countData.rca!;
         // counts[6] = countData.acknowledge!;
         // counts[7] = countData.closed!;
@@ -183,13 +188,15 @@ class _Breakdown1State extends State<Breakdown1> {
                 : BreakdownListCount(); // Provide a default instance
 
         // Map the counts directly from the properties of BreakdownListCount
-        counts[0] = countData.open ?? 0;
-        counts[1] = countData.assigned ?? 0;
-        counts[2] = countData.accepted ?? 0;
-        counts[3] = countData.onProgress ?? 0;
-        counts[4] = countData.holdPending ?? 0;
-        counts[5] = countData.acknowledge ?? 0;
-        counts[6] = countData.closed ?? 0;
+        // counts[0] = countData.open ?? 0;
+        counts[0] = countData.assigned ?? 0;
+        counts[1] = countData.accepted ?? 0;
+        counts[2] = countData.onProgress ?? 0;
+        counts[3] = countData.holdPending ?? 0;
+        counts[4] = countData.rca ?? 0;
+        counts[5] = countData.approvalMfg ?? 0;
+        counts[6] = countData.acknowledge ?? 0;
+        counts[7] = countData.closed ?? 0;
         // counts[5] = countData.rca!;
         // counts[6] = countData.acknowledge!;
         // counts[7] = countData.closed!;
@@ -214,47 +221,80 @@ class _Breakdown1State extends State<Breakdown1> {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Breakdown',
-                style: TextStyle(
-                  fontFamily: "Mulish",
-                  color: Colors.white,
-                )),
             backgroundColor: Color.fromRGBO(30, 152, 165, 1),
-            centerTitle: true,
-            leading: IconButton(
-              icon: const Icon(Icons.filter_alt_outlined),
-              color: Colors.white,
-              onPressed: () => _showSortBottomSheet(context),
-            ),
+            title: isSearching
+                ? TextField(
+                    controller: searchController,
+                    autofocus: true,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      hintText: 'Search Tickets',
+                      hintStyle: TextStyle(color: Colors.white70),
+                      border: InputBorder.none,
+                    ),
+                  )
+                : Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'Breakdown',
+                      style: TextStyle(
+                        fontFamily: "Mulish",
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
             actions: <Widget>[
               IconButton(
-                icon: const Icon(Icons.add),
+                icon: Icon(isSearching ? Icons.close : Icons.search),
                 color: Colors.white,
+                onPressed: () {
+                  setState(() {
+                    isSearching = !isSearching;
+                    if (!isSearching) {
+                      searchController.clear();
+                    }
+                  });
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.filter_alt_outlined),
+                color: Colors.white,
+                onPressed: () => _showSortBottomSheet(context),
+              ),
+              TextButton(
                 onPressed: () =>
                     commonBottomSheet(context, CreateTicketScreen()),
-              ),
+                child: Text(
+                  'CREATE TICKET',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
             ],
           ),
           backgroundColor: const Color.fromARGB(240, 255, 255, 255),
           body: ListView(
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
-              const SizedBox(height: 5.0),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: TextField(
-                  controller: searchController,
-                  decoration: InputDecoration(
-                    labelText: 'Search Tickets',
-                    labelStyle: TextStyle(
-                      fontFamily: "Mulish",
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                  ),
-                ),
-              ),
+              HeightFull(),
+              // if (!isSearching)
+              // Padding(
+              //   padding: const EdgeInsets.all(10),
+              //   child: TextField(
+              //     controller: searchController,
+              //     decoration: InputDecoration(
+              //       labelText: 'Search Tickets',
+              //       labelStyle: TextStyle(
+              //         fontFamily: "Mulish",
+              //       ),
+              //       border: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(20.0),
+              //       ),
+              //     ),
+              //   ),
+              // ),
               // From/To Date Picker
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -286,7 +326,7 @@ class _Breakdown1State extends State<Breakdown1> {
                           children: [
                             const Icon(
                               Icons.calendar_today,
-                              size: 25.0, // Adjust the size here
+                              size: 20, // Adjust the size here
                               color: Color(0xFF018786),
                             ),
                             // Gap(3),
@@ -303,7 +343,7 @@ class _Breakdown1State extends State<Breakdown1> {
                                   : 'Select From Date',
                               style: TextStyle(
                                   fontFamily: "Mulish",
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w500),
                             ),
                           ],
@@ -335,7 +375,7 @@ class _Breakdown1State extends State<Breakdown1> {
                           children: [
                             const Icon(
                               Icons.calendar_today,
-                              size: 25.0, // Adjust the size here
+                              size: 20, // Adjust the size here
                               color: Color(0xFF018786),
                             ),
                             // Gap(3),
@@ -353,7 +393,7 @@ class _Breakdown1State extends State<Breakdown1> {
                                   : 'Select To Date',
                               style: TextStyle(
                                   fontFamily: "Mulish",
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w500),
                             ),
                           ],
@@ -513,8 +553,8 @@ class _Breakdown1State extends State<Breakdown1> {
                           },
                           child: SizedBox(
                             height: isTablet
-                                ? context.heightFull() - 370
-                                : context.heightHalf() + 50,
+                                ? context.heightFull() - 260
+                                : context.heightHalf() + 150,
                             child: ListView.builder(
                               physics: const BouncingScrollPhysics(),
                               shrinkWrap: true,
@@ -583,188 +623,18 @@ class _Breakdown1State extends State<Breakdown1> {
                                       onTap: () {
                                         // logger.e(employee_type);
                                         // logger.e(assetList[index].status);
-                                        if (assetList[index].status == 'Open' ||
-                                            assetList[index].status ==
-                                                'Reassign' ||
-                                            assetList[index].status ==
-                                                'Reject' ||
-                                            assetList[index].status ==
-                                                'Reopen') {
-                                          if (employee_type == "Super Admin" ||
-                                              employee_type == "Head" ||
-                                              employee_type ==
-                                                  "Head/Engineer" ||
-                                              employee_type ==
-                                                  "Department Head" ||
-                                              employee_type == " Plant Head" ||
-                                              employee_type == "BU Head") {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      TicketDetailsScreen(
-                                                    companyId: assetList[index]
-                                                        .companyId
-                                                        .toString(),
-                                                    buId: assetList[index]
-                                                        .buId
-                                                        .toString(),
-                                                    plantId: assetList[index]
-                                                        .plantId
-                                                        .toString(),
-                                                    deptId: assetList[index]
-                                                        .departmentId
-                                                        .toString(),
-                                                    ticketNumber:
-                                                        assetList[index]
-                                                            .id
-                                                            .toString(),
-                                                  ),
-                                                ));
-                                          } else {
-                                            showMessage(
-                                              context: context,
-                                              isError: true,
-                                              responseMessage:
-                                                  "${employee_type} not allowed to Assign",
-                                            );
-                                          }
-                                        }
 
-                                        if (assetList[index].status ==
-                                            'Assign') {
-                                          if (employee_type == "Super Admin" ||
-                                              employee_type ==
-                                                  "Head/Engineer" ||
-                                              employee_type == "Engineer") {
-                                            // logger.e(employee_name ==
-                                            //     assetList[index]
-                                            //         .assignedToEngineer);
-                                            // logger.e(employee_name);
-                                            // logger.e(assetList[index]
-                                            // .assignedToEngineer);
-                                            if (employee_name ==
-                                                assetList[index]
-                                                    .assignedToEngineer) {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        TicketAcceptScreen(
-                                                      ticketNumber:
-                                                          assetList[index]
-                                                              .id
-                                                              .toString(),
-                                                    ),
-                                                  ));
-                                            } else if (assetList[index]
-                                                    .assignedToEngineer ==
-                                                "") {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        TicketAcceptScreen(
-                                                      ticketNumber:
-                                                          assetList[index]
-                                                              .id
-                                                              .toString(),
-                                                    ),
-                                                  ));
-                                            } else {
-                                              showMessage(
-                                                context: context,
-                                                isError: true,
-                                                responseMessage:
-                                                    "This Ticket is not Assigned to you ${employee_name}",
-                                              );
-                                            }
-                                          } else {
-                                            showMessage(
-                                              context: context,
-                                              isError: true,
-                                              responseMessage:
-                                                  "${employee_type} not allowed to Accept",
-                                            );
-                                          }
-                                        }
-                                        if (assetList[index].status == 'Pending' ||
-                                            assetList[index].status ==
-                                                'Check In' ||
-                                            assetList[index].status ==
-                                                'On Hold' ||
-                                            assetList[index].status ==
-                                                'Accept') {
-                                          if (employee_type == "Super Admin" ||
-                                              employee_type ==
-                                                  "Head/Engineer" ||
-                                              employee_type == "Engineer") {
-                                            if (employee_name ==
-                                                assetList[index]
-                                                    .assignedToEngineer) {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        TicketCheckIn(
-                                                      ticketNumber:
-                                                          assetList[index]
-                                                              .id
-                                                              .toString(),
-                                                    ),
-                                                  ));
-                                            } else {
-                                              showMessage(
-                                                context: context,
-                                                isError: true,
-                                                responseMessage:
-                                                    "This Ticket is not Assigned to you ${employee_name}",
-                                              );
-                                            }
-                                          } else {
-                                            showMessage(
-                                              context: context,
-                                              isError: true,
-                                              responseMessage:
-                                                  "${employee_type} not allowed to Check In or Check Out",
-                                            );
-                                          }
-                                        }
-                                        if (assetList[index].status ==
-                                                'Completed' ||
-                                            assetList[index].status ==
-                                                'Fixed' ||
-                                            assetList[index].status ==
-                                                'Awaiting RCA') {
-                                          if (employee_type == "Super Admin" ||
-                                              employee_type == "Head" ||
-                                              employee_type ==
-                                                  "Head/Engineer" ||
-                                              employee_type == "Engineer" ||
-                                              employee_type ==
-                                                  "Department Head" ||
-                                              employee_type == " Plant Head" ||
-                                              employee_type == "BU Head") {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      TicketCompletedScreen(
-                                                    ticketNumber:
-                                                        assetList[index]
-                                                            .id
-                                                            .toString(),
-                                                  ),
-                                                ));
-                                          } else {
-                                            showMessage(
-                                              context: context,
-                                              isError: true,
-                                              responseMessage:
-                                                  "${employee_type} not allowed to View",
-                                            );
-                                          }
-                                        }
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                AllTicketDetails(
+                                              ticketNumber: assetList[index]
+                                                  .id
+                                                  .toString(),
+                                            ),
+                                          ),
+                                        );
                                       },
                                       child: Container(
                                         padding: EdgeInsets.all(12),
@@ -780,6 +650,8 @@ class _Breakdown1State extends State<Breakdown1> {
                                                     case "Assign":
                                                     case "Reassign":
                                                       return Color(0xFF7a7a00);
+                                                    case "Approval of Mfg":
+                                                      return Color(0xFF7a7a00);
                                                     case "Accept":
                                                       return Color(0xFF64a300);
                                                     case "Pending":
@@ -789,6 +661,8 @@ class _Breakdown1State extends State<Breakdown1> {
                                                     case "Completed":
                                                       return Color(0xFF0039a1);
                                                     case "Reject":
+                                                      return Color(0xFFb53101);
+                                                    case "Awaiting RCA":
                                                       return Color(0xFFb53101);
                                                     case "Reopen":
                                                       return Color(0xFF17a2b8);
@@ -837,6 +711,9 @@ class _Breakdown1State extends State<Breakdown1> {
                                                         case "Reassign":
                                                           return Color(
                                                               0xFF7a7a00);
+                                                        case "Approval of Mfg":
+                                                          return Color(
+                                                              0xFF7a7a00);
                                                         case "Accept":
                                                           return Color(
                                                               0xFF64a300);
@@ -850,6 +727,9 @@ class _Breakdown1State extends State<Breakdown1> {
                                                           return Color(
                                                               0xFF0039a1);
                                                         case "Reject":
+                                                          return Color(
+                                                              0xFFb53101);
+                                                        case "Awaiting RCA":
                                                           return Color(
                                                               0xFFb53101);
                                                         case "Reopen":
@@ -867,10 +747,6 @@ class _Breakdown1State extends State<Breakdown1> {
                                                     }(),
                                                   ),
                                                 ),
-                                                // TicketInfoCardWidget(
-                                                //     title: '',
-                                                //     value:
-                                                //         '${assetList[index].ticketNo}'),
                                                 const Spacer(),
                                                 Text(
                                                   '${assetList[index].status} | ',
@@ -890,44 +766,9 @@ class _Breakdown1State extends State<Breakdown1> {
                                                             FontWeight.w500))
                                               ],
                                             ),
-                                            const SizedBox(height: 8),
+                                            const SizedBox(height: 5),
                                             TicketInfoCardWidget(
-                                                title: 'Ticket From',
-                                                value:
-                                                    '${assetList[index].ticketFrom}'),
-                                            const SizedBox(height: 8),
-                                            TicketInfoCardWidget(
-                                                title: 'Category',
-                                                value:
-                                                    '${assetList[index].breakdownCategoryName}'),
-                                            const SizedBox(height: 8),
-                                            TicketInfoCardWidget(
-                                                title: 'Issue',
-                                                value:
-                                                    '${assetList[index].breakdownSubCategoryName}'),
-                                            const SizedBox(height: 8),
-                                            TicketInfoCardWidget(
-                                                title: 'Asset',
-                                                value:
-                                                    '${assetList[index].asset}'),
-                                            const SizedBox(height: 8),
-                                            TicketInfoCardWidget(
-                                                title: 'Serial No',
-                                                value:
-                                                    '${assetList[index].assetSerialNo}'),
-                                            const SizedBox(height: 8),
-                                            TicketInfoCardWidget(
-                                                title: 'Location',
-                                                value:
-                                                    '${assetList[index].locationName}'),
-                                            const SizedBox(height: 8),
-                                            TicketInfoCardWidget(
-                                                title: 'Raised By',
-                                                value:
-                                                    '${assetList[index].createdBy}'),
-                                            const SizedBox(height: 8),
-                                            TicketInfoCardWidget(
-                                                title: 'Date and Time',
+                                                title: 'Date',
                                                 value: assetList[index]
                                                             .createdOn !=
                                                         null
@@ -940,297 +781,317 @@ class _Breakdown1State extends State<Breakdown1> {
                                                             .toLocal())
                                                     : 'N/A' // If createdOn is null, show 'N/A'
                                                 ),
-                                            const SizedBox(height: 8),
+                                            const SizedBox(height: 5),
+                                            TicketInfoCardWidget(
+                                                title: 'Asset',
+                                                value:
+                                                    '${assetList[index].asset}'),
+                                            const SizedBox(height: 5),
+                                            TicketInfoCardWidget(
+                                                title: 'Category',
+                                                value:
+                                                    '${assetList[index].breakdownCategoryName}'),
+                                            const SizedBox(height: 5),
+                                            TicketInfoCardWidget(
+                                                title: 'Issue',
+                                                value:
+                                                    '${assetList[index].breakdownSubCategoryName}'),
+                                            const SizedBox(height: 5),
+                                            TicketInfoCardWidget(
+                                                title: 'Department',
+                                                value:
+                                                    '${assetList[index].department}'),
+                                            const SizedBox(height: 5),
+                                            TicketInfoCardWidget(
+                                                title: 'Raised By',
+                                                value:
+                                                    '${assetList[index].createdBy}'),
+                                            const SizedBox(height: 5),
+                                            if (assetList[index].status !=
+                                                    'Open' &&
+                                                assetList[index].status !=
+                                                    'Reject' &&
+                                                assetList[index].status !=
+                                                    'Reassign') ...[
+                                              TicketInfoCardWidget(
+                                                  title: 'Assigned To',
+                                                  value:
+                                                      '${assetList[index].assignedToEngineer}'),
+                                              const SizedBox(height: 5),
+                                            ],
+                                            TicketInfoCardWidget(
+                                              title: 'Status',
+                                              value: (assetList[index]
+                                                              .assetStatus
+                                                              ?.toString() ??
+                                                          '') ==
+                                                      '0'
+                                                  ? 'Stopped'
+                                                  : (assetList[index]
+                                                                  .assetStatus
+                                                                  ?.toString() ??
+                                                              '') ==
+                                                          '1'
+                                                      ? 'Complaint'
+                                                      : assetList[index]
+                                                              .assetStatus
+                                                              ?.toString() ??
+                                                          'Unknown',
+                                            ),
+                                            const SizedBox(height: 5),
+                                            if (assetList[index].status ==
+                                                    'Completed' ||
+                                                assetList[index].status ==
+                                                    'Fixed') ...[
+                                              TicketInfoCardWidget(
+                                                  title: 'Completed By',
+                                                  value:
+                                                      '${assetList[index].fixedBy}'),
+                                              const SizedBox(height: 5),
+                                            ],
                                             if (assetList[index].status ==
                                                 "Reject")
                                               TicketInfoCardWidget(
                                                   title: 'Rejected By',
                                                   value:
                                                       '${assetList[index].rejectedBy}'),
-                                            const SizedBox(height: 8),
-                                            if (assetList[index].status !=
-                                                "Open")
-                                              TicketInfoCardWidget(
-                                                  title: 'Assigned To',
-                                                  value:
-                                                      '${assetList[index].assignedToEngineer}'),
+                                            // const SizedBox(height: 5),
+                                            // if (assetList[index].status !=
+                                            //     "Open")
+                                            //   TicketInfoCardWidget(
+                                            //       title: 'Assigned To',
+                                            //       value:
+                                            //           '${assetList[index].assignedToEngineer}'),
                                             const Divider(),
                                             Center(
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.end,
                                                 crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
+                                                    CrossAxisAlignment.center,
                                                 children: [
-                                                  IconButton(
-                                                    onPressed: () {
-                                                      BreakdownRepository()
-                                                          .getBreakDownDetailList(
-                                                              context,
-                                                              ticket_no: assetList[
+                                                  SvgPicture.asset(
+                                                    'images/ic_log.svg',
+                                                    width: 24,
+                                                    height:
+                                                        24, // Ensures the SVG fits within the given dimensions
+                                                    color: Color(0Xff018786),
+                                                  ),
+                                                  Spacer(),
+                                                  if (assetList[index].status ==
+                                                          'Open' ||
+                                                      assetList[index].status ==
+                                                          'Reject' ||
+                                                      assetList[index].status ==
+                                                          'Reassign' ||
+                                                      assetList[index].status ==
+                                                          'Reopen') ...[
+                                                    ElevatedButton(
+                                                      onPressed: () {
+                                                        // commonDialog(context,
+                                                        //     AcceptDialog());
+                                                      },
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            Color(0Xff008900),
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                      ),
+                                                      child: Text("Accept"),
+                                                    ),
+                                                  ],
+                                                  if (assetList[index].status ==
+                                                      'Assign') ...[
+                                                    ElevatedButton(
+                                                      onPressed: () {
+                                                        BreakdownRepository()
+                                                            .getBreakDownDetailList(
+                                                                context,
+                                                                ticket_no: assetList[
+                                                                        index]
+                                                                    .id
+                                                                    .toString());
+                                                        // .then((V) {
+                                                        commonDialog(
+                                                            context,
+                                                            AcceptDialog(
+                                                              ticketId: assetList[
                                                                       index]
                                                                   .id
-                                                                  .toString());
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          // logger.w(
-                                                          //     assetList[index]
-                                                          //         .toJson());
+                                                                  .toString(),
+                                                              companyId:
+                                                                  assetList[
+                                                                          index]
+                                                                      .companyId
+                                                                      .toString(),
+                                                              plantId: assetList[
+                                                                      index]
+                                                                  .plantId
+                                                                  .toString(),
+                                                              deptId: assetList[
+                                                                      index]
+                                                                  .departmentId
+                                                                  .toString(),
+                                                              buId: assetList[
+                                                                      index]
+                                                                  .buId
+                                                                  .toString(),
+                                                            ));
+                                                        // });
+                                                      },
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            Color(0Xff008900),
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                      ),
+                                                      child: Text("Accept"),
+                                                    ),
+                                                    const SizedBox(width: 5),
+                                                    if (assetList[index]
+                                                            .engineerId ==
+                                                        SharedUtil().getLoginId)
+                                                      ElevatedButton(
+                                                        onPressed: () {},
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                          backgroundColor:
+                                                              Colors.red,
+                                                          foregroundColor:
+                                                              Colors.white,
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                          ),
+                                                        ),
+                                                        child: Text("Deny"),
+                                                      ),
+                                                  ],
+                                                  if (assetList[index].status ==
+                                                          'Accept' ||
+                                                      assetList[index].status ==
+                                                          'Pending') ...[
+                                                    ElevatedButton(
+                                                      onPressed: () {},
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            Colors.red,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                      ),
+                                                      child: Text("Check In"),
+                                                    ),
+                                                  ],
 
-                                                          return AlertDialog(
-                                                            title: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                const Text(
-                                                                  'Remarks',
-                                                                  style: TextStyle(
-                                                                      fontFamily:
-                                                                          "Mulish",
-                                                                      fontSize:
-                                                                          16,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .normal),
-                                                                ),
-                                                                if (assetList[
-                                                                            index]
-                                                                        .status ==
-                                                                    'Fixed')
-                                                                  InkWell(
-                                                                      onTap: () =>
-                                                                          Navigator.pop(
-                                                                              context),
-                                                                      child: Icon(
-                                                                          Icons
-                                                                              .close)),
-                                                              ],
-                                                            ),
-                                                            backgroundColor:
-                                                                Colors.white,
-                                                            content: Column(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
-                                                              children: [
-                                                                // breakDown
-                                                                //         .isLoading
-                                                                //     ? Loader()
-                                                                //     : breakDown
-                                                                //             .ticketDetailData!
-                                                                //             .breakdownDetailList!
-                                                                //             .isEmpty
-                                                                //         ? const Center(
-                                                                //             child:
-                                                                //                 Text("No data available"))
-                                                                //         :
-                                                                TextField(
-                                                                  controller:
-                                                                      textFieldController,
-                                                                  decoration:
-                                                                      InputDecoration(
-                                                                    labelText:
-                                                                        'Enter Reason',
-                                                                    labelStyle: TextStyle(
-                                                                        fontFamily:
-                                                                            "Mulish",
-                                                                        color: Colors
-                                                                            .black),
-                                                                    border:
-                                                                        const OutlineInputBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.all(
-                                                                              Radius.circular(15.0)),
-                                                                    ),
-                                                                    enabledBorder:
-                                                                        OutlineInputBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              15),
-                                                                      borderSide:
-                                                                          const BorderSide(
-                                                                              color: Colors.black),
-                                                                    ),
-                                                                    focusedBorder:
-                                                                        OutlineInputBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              15),
-                                                                      borderSide:
-                                                                          const BorderSide(
-                                                                              color: Colors.black),
-                                                                    ),
-                                                                  ),
-                                                                  style: TextStyle(
-                                                                      fontFamily:
-                                                                          "Mulish",
-                                                                      color: Colors
-                                                                          .black),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            actions: assetList[
-                                                                            index]
-                                                                        .status ==
-                                                                    'Fixed'
-                                                                ? []
-                                                                : [
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () {
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                      },
-                                                                      child:
-                                                                          const Text(
-                                                                        'Cancel',
-                                                                        style: TextStyle(
-                                                                            fontFamily:
-                                                                                "Mulish",
-                                                                            color:
-                                                                                Colors.black),
-                                                                      ),
-                                                                    ),
-                                                                    ElevatedButton(
-                                                                      onPressed:
-                                                                          () {
-                                                                        ApiService()
-                                                                            .TicketAccept(
-                                                                                ticketNo: assetList[index].id.toString(),
-                                                                                status_id: assetList[index].status == 'Open'
-                                                                                    ? '1'
-                                                                                    : assetList[index].status == 'Assign'
-                                                                                        ? '2'
-                                                                                        : assetList[index].status == 'Accept'
-                                                                                            ? '3'
-                                                                                            : assetList[index].status == 'Check In'
-                                                                                                ? "6"
-                                                                                                : assetList[index].status == 'On Hold'
-                                                                                                    ? '8'
-                                                                                                    : assetList[index].status == 'Pending'
-                                                                                                        ? '9'
-                                                                                                        : assetList[index].status == 'Completed'
-                                                                                                            ? '10'
-                                                                                                            : assetList[index].status == 'Fixed'
-                                                                                                                ? assetList[index].completedComment.toString()
-                                                                                                                : assetList[index].status == 'Reject'
-                                                                                                                    ? '4'
-                                                                                                                    : assetList[index].status == 'Reopen'
-                                                                                                                        ? '12'
-                                                                                                                        : assetList[index].status == 'Reassign'
-                                                                                                                            ? '5'
-                                                                                                                            : '',
-                                                                                priority: '',
-                                                                                assign_type: '',
-                                                                                downtime_val: '',
-                                                                                open_comment: textFieldController.text,
-                                                                                assigned_comment: textFieldController.text,
-                                                                                accept_comment: textFieldController.text,
-                                                                                reject_comment: textFieldController.text,
-                                                                                hold_comment: textFieldController.text,
-                                                                                pending_comment: textFieldController.text,
-                                                                                check_out_comment: "",
-                                                                                completed_comment: textFieldController.text,
-                                                                                reopen_comment: textFieldController.text,
-                                                                                reassign_comment: textFieldController.text,
-                                                                                comment: textFieldController.text,
-                                                                                solution: '',
-                                                                                breakdown_category_id: '',
-                                                                                breakdown_subcategory_id: '',
-                                                                                checkin_comment: textFieldController.text,
-                                                                                planned_Date: ""
-                                                                                // open_comment: assetList[index].status == 'Open'
-                                                                                //     ? textFieldController.text
-                                                                                //     : "",
-                                                                                // assigned_comment: assetList[index].status == 'Assign'
-                                                                                //     ? textFieldController.text
-                                                                                //     : "",
-                                                                                // accept_comment: assetList[index].status == 'Accept'
-                                                                                //     ? textFieldController.text
-                                                                                //     : "",
-                                                                                // reject_comment: assetList[index].status == 'Reject'
-                                                                                //     ? textFieldController.text
-                                                                                //     : "",
-                                                                                // hold_comment: assetList[index].status == 'On Hold'
-                                                                                //     ? textFieldController.text
-                                                                                //     : "",
-                                                                                // pending_comment: assetList[index].status == 'Pending'
-                                                                                //     ? textFieldController.text
-                                                                                //     : "",
-                                                                                // check_out_comment:
-                                                                                //     "",
-                                                                                // completed_comment: assetList[index].status == 'Completed'
-                                                                                //     ? textFieldController.text
-                                                                                //     : "",
-                                                                                // reopen_comment: assetList[index].status == 'Reopen'
-                                                                                //     ? textFieldController.text
-                                                                                //     : "",
-                                                                                // reassign_comment: assetList[index].status == 'Reassign'
-                                                                                //     ? textFieldController.text
-                                                                                //     : "",
-                                                                                // comment:
-                                                                                //     textFieldController.text,
-                                                                                // solution:
-                                                                                //     '',
-                                                                                // breakdown_category_id:
-                                                                                //     '',
-                                                                                // breakdown_subcategory_id:
-                                                                                //     '',
-                                                                                // checkin_comment: assetList[index].status == 'Check In'
-                                                                                //     ? textFieldController.text
-                                                                                //     : '',
-                                                                                )
-                                                                            .then((value) {
-                                                                          if (value.isError ==
-                                                                              false) {
-                                                                            _fetchTicketCounts();
-
-                                                                            Navigator.pop(context);
-                                                                          }
-                                                                          showMessage(
-                                                                            context:
-                                                                                context,
-                                                                            isError:
-                                                                                value.isError!,
-                                                                            responseMessage:
-                                                                                value.message!,
-                                                                          );
-                                                                        });
-                                                                      },
-                                                                      style: ElevatedButton
-                                                                          .styleFrom(
-                                                                        backgroundColor: const Color
-                                                                            .fromRGBO(
-                                                                            21,
-                                                                            147,
-                                                                            159,
-                                                                            1),
-                                                                      ),
-                                                                      child:
-                                                                          const Text(
-                                                                        'Submit',
-                                                                        style: TextStyle(
-                                                                            fontFamily:
-                                                                                "Mulish",
-                                                                            color:
-                                                                                Colors.white),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                          );
-                                                        },
-                                                      );
-                                                      setState(() {});
-                                                    },
-                                                    icon: const Icon(
-                                                        Icons.chat_outlined),
-                                                    color: Colors.black,
-                                                    iconSize: 24,
-                                                  ),
-
+                                                  if (assetList[index].status ==
+                                                      'Check In') ...[
+                                                    ElevatedButton(
+                                                      onPressed: () {},
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            Colors.red,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                      ),
+                                                      child: Text("Check Out"),
+                                                    ),
+                                                  ],
+                                                  if (assetList[index].status ==
+                                                          'Check In' ||
+                                                      assetList[index].status ==
+                                                          'Accept' ||
+                                                      assetList[index].status ==
+                                                          'Pending') ...[
+                                                    const SizedBox(width: 5),
+                                                    ElevatedButton(
+                                                      onPressed: () {},
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            Color(0xFF018786),
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                      ),
+                                                      child: Text("Re-Assign"),
+                                                    ),
+                                                  ],
+                                                  if (assetList[index].status ==
+                                                      'Awaiting RCA') ...[
+                                                    ElevatedButton(
+                                                      onPressed: () {},
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            Colors.red,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                      ),
+                                                      child: Text("Update"),
+                                                    ),
+                                                  ],
+                                                  if (assetList[index].status ==
+                                                      'Approval of Mfg') ...[
+                                                    ElevatedButton(
+                                                      onPressed: () {},
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            Colors.red,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                      ),
+                                                      child: Text("Approval"),
+                                                    ),
+                                                  ],
                                                   // Check if the status is 'acknowledge' or 'fixed'
                                                   if (assetList[index].status ==
                                                           'Completed' &&
@@ -1551,6 +1412,274 @@ class _Breakdown1State extends State<Breakdown1> {
                                                       iconSize: 24,
                                                     ),
                                                   ],
+                                                  IconButton(
+                                                    onPressed: () {
+                                                      BreakdownRepository()
+                                                          .getBreakDownDetailList(
+                                                              context,
+                                                              ticket_no: assetList[
+                                                                      index]
+                                                                  .id
+                                                                  .toString());
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          // logger.w(
+                                                          //     assetList[index]
+                                                          //         .toJson());
+
+                                                          return AlertDialog(
+                                                            title: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                const Text(
+                                                                  'Remarks',
+                                                                  style: TextStyle(
+                                                                      fontFamily:
+                                                                          "Mulish",
+                                                                      fontSize:
+                                                                          16,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .normal),
+                                                                ),
+                                                                if (assetList[
+                                                                            index]
+                                                                        .status ==
+                                                                    'Fixed')
+                                                                  InkWell(
+                                                                      onTap: () =>
+                                                                          Navigator.pop(
+                                                                              context),
+                                                                      child: Icon(
+                                                                          Icons
+                                                                              .close)),
+                                                              ],
+                                                            ),
+                                                            backgroundColor:
+                                                                Colors.white,
+                                                            content: Column(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              children: [
+                                                                // breakDown
+                                                                //         .isLoading
+                                                                //     ? Loader()
+                                                                //     : breakDown
+                                                                //             .ticketDetailData!
+                                                                //             .breakdownDetailList!
+                                                                //             .isEmpty
+                                                                //         ? const Center(
+                                                                //             child:
+                                                                //                 Text("No data available"))
+                                                                //         :
+                                                                TextField(
+                                                                  controller:
+                                                                      textFieldController,
+                                                                  decoration:
+                                                                      InputDecoration(
+                                                                    labelText:
+                                                                        'Enter Reason',
+                                                                    labelStyle: TextStyle(
+                                                                        fontFamily:
+                                                                            "Mulish",
+                                                                        color: Colors
+                                                                            .black),
+                                                                    border:
+                                                                        const OutlineInputBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.all(
+                                                                              Radius.circular(15.0)),
+                                                                    ),
+                                                                    enabledBorder:
+                                                                        OutlineInputBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              15),
+                                                                      borderSide:
+                                                                          const BorderSide(
+                                                                              color: Colors.black),
+                                                                    ),
+                                                                    focusedBorder:
+                                                                        OutlineInputBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              15),
+                                                                      borderSide:
+                                                                          const BorderSide(
+                                                                              color: Colors.black),
+                                                                    ),
+                                                                  ),
+                                                                  style: TextStyle(
+                                                                      fontFamily:
+                                                                          "Mulish",
+                                                                      color: Colors
+                                                                          .black),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            actions: assetList[
+                                                                            index]
+                                                                        .status ==
+                                                                    'Fixed'
+                                                                ? []
+                                                                : [
+                                                                    TextButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      },
+                                                                      child:
+                                                                          const Text(
+                                                                        'Cancel',
+                                                                        style: TextStyle(
+                                                                            fontFamily:
+                                                                                "Mulish",
+                                                                            color:
+                                                                                Colors.black),
+                                                                      ),
+                                                                    ),
+                                                                    ElevatedButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        ApiService()
+                                                                            .TicketAccept(
+                                                                                ticketNo: assetList[index].id.toString(),
+                                                                                status_id: assetList[index].status == 'Open'
+                                                                                    ? '1'
+                                                                                    : assetList[index].status == 'Assign'
+                                                                                        ? '2'
+                                                                                        : assetList[index].status == 'Accept'
+                                                                                            ? '3'
+                                                                                            : assetList[index].status == 'Check In'
+                                                                                                ? "6"
+                                                                                                : assetList[index].status == 'On Hold'
+                                                                                                    ? '8'
+                                                                                                    : assetList[index].status == 'Pending'
+                                                                                                        ? '9'
+                                                                                                        : assetList[index].status == 'Completed'
+                                                                                                            ? '10'
+                                                                                                            : assetList[index].status == 'Fixed'
+                                                                                                                ? assetList[index].completedComment.toString()
+                                                                                                                : assetList[index].status == 'Reject'
+                                                                                                                    ? '4'
+                                                                                                                    : assetList[index].status == 'Reopen'
+                                                                                                                        ? '12'
+                                                                                                                        : assetList[index].status == 'Reassign'
+                                                                                                                            ? '5'
+                                                                                                                            : '',
+                                                                                priority: '',
+                                                                                assign_type: '',
+                                                                                downtime_val: '',
+                                                                                open_comment: textFieldController.text,
+                                                                                assigned_comment: textFieldController.text,
+                                                                                accept_comment: textFieldController.text,
+                                                                                reject_comment: textFieldController.text,
+                                                                                hold_comment: textFieldController.text,
+                                                                                pending_comment: textFieldController.text,
+                                                                                check_out_comment: "",
+                                                                                completed_comment: textFieldController.text,
+                                                                                reopen_comment: textFieldController.text,
+                                                                                reassign_comment: textFieldController.text,
+                                                                                comment: textFieldController.text,
+                                                                                solution: '',
+                                                                                breakdown_category_id: '',
+                                                                                breakdown_subcategory_id: '',
+                                                                                checkin_comment: textFieldController.text,
+                                                                                planned_Date: ""
+                                                                                // open_comment: assetList[index].status == 'Open'
+                                                                                //     ? textFieldController.text
+                                                                                //     : "",
+                                                                                // assigned_comment: assetList[index].status == 'Assign'
+                                                                                //     ? textFieldController.text
+                                                                                //     : "",
+                                                                                // accept_comment: assetList[index].status == 'Accept'
+                                                                                //     ? textFieldController.text
+                                                                                //     : "",
+                                                                                // reject_comment: assetList[index].status == 'Reject'
+                                                                                //     ? textFieldController.text
+                                                                                //     : "",
+                                                                                // hold_comment: assetList[index].status == 'On Hold'
+                                                                                //     ? textFieldController.text
+                                                                                //     : "",
+                                                                                // pending_comment: assetList[index].status == 'Pending'
+                                                                                //     ? textFieldController.text
+                                                                                //     : "",
+                                                                                // check_out_comment:
+                                                                                //     "",
+                                                                                // completed_comment: assetList[index].status == 'Completed'
+                                                                                //     ? textFieldController.text
+                                                                                //     : "",
+                                                                                // reopen_comment: assetList[index].status == 'Reopen'
+                                                                                //     ? textFieldController.text
+                                                                                //     : "",
+                                                                                // reassign_comment: assetList[index].status == 'Reassign'
+                                                                                //     ? textFieldController.text
+                                                                                //     : "",
+                                                                                // comment:
+                                                                                //     textFieldController.text,
+                                                                                // solution:
+                                                                                //     '',
+                                                                                // breakdown_category_id:
+                                                                                //     '',
+                                                                                // breakdown_subcategory_id:
+                                                                                //     '',
+                                                                                // checkin_comment: assetList[index].status == 'Check In'
+                                                                                //     ? textFieldController.text
+                                                                                //     : '',
+                                                                                )
+                                                                            .then((value) {
+                                                                          if (value.isError ==
+                                                                              false) {
+                                                                            _fetchTicketCounts();
+
+                                                                            Navigator.pop(context);
+                                                                          }
+                                                                          showMessage(
+                                                                            context:
+                                                                                context,
+                                                                            isError:
+                                                                                value.isError!,
+                                                                            responseMessage:
+                                                                                value.message!,
+                                                                          );
+                                                                        });
+                                                                      },
+                                                                      style: ElevatedButton
+                                                                          .styleFrom(
+                                                                        backgroundColor: const Color
+                                                                            .fromRGBO(
+                                                                            21,
+                                                                            147,
+                                                                            159,
+                                                                            1),
+                                                                      ),
+                                                                      child:
+                                                                          const Text(
+                                                                        'Submit',
+                                                                        style: TextStyle(
+                                                                            fontFamily:
+                                                                                "Mulish",
+                                                                            color:
+                                                                                Colors.white),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                          );
+                                                        },
+                                                      );
+                                                      setState(() {});
+                                                    },
+                                                    icon: const Icon(
+                                                        Icons.chat_outlined),
+                                                    color: Colors.black,
+                                                    iconSize: 24,
+                                                  ),
                                                 ],
                                               ),
                                             )

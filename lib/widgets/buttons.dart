@@ -15,12 +15,13 @@ class ButtonPrimary extends ElevatedButton {
     required String label,
     double? size,
     bool isLoading = false,
-    Color backgroundColor = Colors.blue, // Default color
+    Color? backgroundColor, // Default color
   }) : super(
           style: ElevatedButton.styleFrom(
             backgroundColor:
-                Color.fromRGBO(30, 152, 165, 1), // Set background color
+                backgroundColor ?? Palette.primary, // Set background color
             foregroundColor: Colors.white, // Set text/icon color
+
             // ),
           ),
           child: Padding(
@@ -29,6 +30,7 @@ class ButtonPrimary extends ElevatedButton {
                 ? const Loader(color: Palette.pureWhite)
                 : TextCustom(
                     label,
+                    align: TextAlign.center,
                     size: size ?? 16,
                     color: Palette.pureWhite,
                     fontWeight: FontWeight.w700,
@@ -171,6 +173,7 @@ class SecondaryIconButton extends IconButton {
           style: IconButtonTheme.of(context).style?.copyWith(
               foregroundColor: const WidgetStatePropertyAll(Palette.pureWhite),
               backgroundColor:
+                  // ignore: deprecated_member_use
                   WidgetStatePropertyAll(Palette.dark.withOpacity(.2))),
         );
 }

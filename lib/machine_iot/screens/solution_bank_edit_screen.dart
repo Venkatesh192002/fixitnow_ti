@@ -8,8 +8,6 @@ import 'package:auscurator/machine_iot/screens/why_why_screen.dart';
 import 'package:auscurator/machine_iot/util.dart';
 import 'package:auscurator/machine_iot/widget/shimmer_effect.dart';
 import 'package:auscurator/model/TicketDetailModel.dart';
-import 'package:auscurator/model/root_cause_model.dart';
-import 'package:auscurator/provider/all_provider.dart';
 import 'package:auscurator/provider/breakkdown_provider.dart';
 import 'package:auscurator/repository/breakdown_repository.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +29,7 @@ class _SolutionBankEditScreenState extends State<SolutionBankEditScreen> {
   final List<TextEditingController> answerControllers = [];
 
   // TextEditingControllers for Root Cause, Solution, and Remark
-  TextEditingController rootCauseController = TextEditingController();
+  // TextEditingController rootCauseController = TextEditingController();
    TextEditingController solutionController = TextEditingController();
    TextEditingController remarkController = TextEditingController();
 
@@ -41,33 +39,33 @@ class _SolutionBankEditScreenState extends State<SolutionBankEditScreen> {
     //   BreakdownRepository()
     //       .getBreakDownDetailList(context, ticket_no: widget.ticketNumber);
     // });
-    List<RootCauseList> data =
-        breakProvider.rootCauseData?.rootCauseLists ?? [];
-    final rootCause = data.isNotEmpty
-        ? data.firstWhere(
-            (e) =>
-                "${e.refId}" ==
-                "${breakProvider.ticketDetailData?.breakdownDetailList?[0].rootCauseId}",
-            orElse: () => RootCauseList(),
-          )
-        : null;
-    logger.e(rootCause?.toJson());
-    rootCauseController.text =rootCause?.rootCauseCode==null||rootCause?.rootCauseName==null?"":
-        "${rootCause?.rootCauseCode} - ${rootCause?.rootCauseName}";
+    // List<RootCauseList> data =
+    //     breakProvider.rootCauseData?.rootCauseLists ?? [];
+    // final rootCause = data.isNotEmpty
+    //     ? data.firstWhere(
+    //         (e) =>
+    //             "${e.refId}" ==
+    //             "${breakProvider.ticketDetailData?.breakdownDetailList?[0].rootCauseId}",
+    //         orElse: () => RootCauseList(),
+    //       )
+    //     : null;
+    // logger.e(rootCause?.toJson());
+    // rootCauseController.text =rootCause?.rootCauseCode==null||rootCause?.rootCauseName==null?"":
+    //     "${rootCause?.rootCauseCode} - ${rootCause?.rootCauseName}";
 
-try {
-            var rootCause = breakProvider.rootCauseData?.rootCauseLists
-                .firstWhere((e) =>
-                    "${e.refId}" ==
-                    "${breakProvider.ticketDetailData?.breakdownDetailList?[0].rootCauseId}");
-            logger.e(rootCause?.toJson());
-            rootCauseController.text =
-                "${rootCause?.rootCauseCode} - ${rootCause?.rootCauseName}";
+// try {
+//             // var rootCause = breakProvider.rootCauseData?.rootCauseLists
+//                 .firstWhere((e) =>
+//                     "${e.refId}" ==
+//                     "${breakProvider.ticketDetailData?.breakdownDetailList?[0].rootCauseId}");
+//             logger.e(rootCause?.toJson());
+//             // rootCauseController.text =
+//             //     "${rootCause?.rootCauseCode} - ${rootCause?.rootCauseName}";
 
-                selectedRootCauseId="${rootCause?.refId}";
-          } catch (e) {
-            // logger.e("No matching RootCauseList found.");
-          }
+//                 selectedRootCauseId="${rootCause?.refId}";
+//           } catch (e) {
+//             // logger.e("No matching RootCauseList found.");
+//           }
 
     // Initialize 5 controllers for Why and Answer pairs
     for (int i = 0; i < 5; i++) {
@@ -93,7 +91,7 @@ try {
     for (var controller in answerControllers) {
       controller.dispose();
     }
-    rootCauseController.dispose();
+    // rootCauseController.dispose();
     abnormalityController.dispose();
     solutionController.dispose();
     remarkController.dispose();
@@ -131,7 +129,7 @@ try {
         whyControllers[4].text = breakdownDetail.why5 ?? '';
         answerControllers[4].text = breakdownDetail.action5 ?? '';
         if (widget.status == "Fixed") {
-          rootCauseController.text = breakdownDetail.rootCause ?? '';
+          // rootCauseController.text = breakdownDetail.rootCause ?? '';
         } 
         solutionController.text = breakdownDetail.solution ?? '';
         remarkController.text = breakdownDetail.remarks ?? '';
@@ -308,43 +306,43 @@ try {
                             ),
                           const SizedBox(height: 20),
                           // Additional fields
-                          if (widget.status == "Fixed") ...[
-                            _buildTextField(rootCauseController, 'Root Cause*'),
-                          ] else ...[
-                            TextField(
-                              controller: rootCauseController,
-                              decoration: InputDecoration(
-                                  labelText: "Root Cause*",
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        color: Colors.transparent),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  focusedBorder: UnderlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.transparent),
-                                      borderRadius: BorderRadius.circular(20))),
-                              readOnly: true,
-                              onTap: () async {
-                                // Show the CustomSearchDialog and get the selected asset
-                                final RootCauseList? result = await showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CustomdDropdownDialog();
-                                  },
-                                );
-                                // Check if a result was returned
-                                if (result != null) {
-                                  rootCauseController.text =
-                                      "${result.rootCauseCode} - ${result.rootCauseName}";
-                                  selectedRootCauseId = result.refId.toString();
-                                  setState(() {}); // Force UI update
-                                }
-                              },
-                            ),
-                          ],
+                          // if (widget.status == "Fixed") ...[
+                            // _buildTextField(rootCauseController, 'Root Cause*'),
+                          // ] else ...[
+                          //   TextField(
+                          //     controller: rootCauseController,
+                          //     decoration: InputDecoration(
+                          //         labelText: "Root Cause*",
+                          //         filled: true,
+                          //         fillColor: Colors.white,
+                          //         enabledBorder: UnderlineInputBorder(
+                          //           borderSide: const BorderSide(
+                          //               color: Colors.transparent),
+                          //           borderRadius: BorderRadius.circular(20),
+                          //         ),
+                          //         focusedBorder: UnderlineInputBorder(
+                          //             borderSide: const BorderSide(
+                          //                 color: Colors.transparent),
+                          //             borderRadius: BorderRadius.circular(20))),
+                          //     readOnly: true,
+                          //     onTap: () async {
+                          //       // Show the CustomSearchDialog and get the selected asset
+                          //       final RootCauseList? result = await showDialog(
+                          //         context: context,
+                          //         builder: (BuildContext context) {
+                          //           return CustomdDropdownDialog();
+                          //         },
+                          //       );
+                          //       // Check if a result was returned
+                          //       if (result != null) {
+                          //         rootCauseController.text =
+                          //             "${result.rootCauseCode} - ${result.rootCauseName}";
+                          //         selectedRootCauseId = result.refId.toString();
+                          //         setState(() {}); // Force UI update
+                          //       }
+                          //     },
+                          //   ),
+                          // ],
                           _buildTextField(solutionController, 'Solution*'),
                           _buildTextField(remarkController, 'Remark'),
                           if (widget.ticketFrom != "CMMS") ...[
@@ -393,7 +391,6 @@ try {
                                   onPressed: () {
                                     if (whyControllers[0].text.isEmpty ||
                                         answerControllers[0].text.isEmpty ||
-                                        rootCauseController.text.isEmpty ||
                                         solutionController.text.isEmpty) {
                                       showMessage(
                                           context: context,

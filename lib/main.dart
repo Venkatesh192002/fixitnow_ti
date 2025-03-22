@@ -54,16 +54,18 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   );
 }
 
-
 Future<void> checkForUpdates() async {
   InAppUpdate.checkForUpdate().then((info) {
     if (info.updateAvailability == UpdateAvailability.updateAvailable) {
-      InAppUpdate.performImmediateUpdate()
-          .catchError((e) => print("Update Error: $e"));
+      // ignore: body_might_complete_normally_catch_error
+      InAppUpdate.performImmediateUpdate().catchError((e) {
+        print("Update Error: $e");
+      });
     }
-  }).catchError((e) => print("Update Check Error: $e"));
+  }).catchError((e) {
+    print("Update Check Error: $e");
+  });
 }
-
 
 checkConnection(BuildContext context) async {
   await Connectivity().checkConnectivity().then((value) {
@@ -159,66 +161,66 @@ Future<void> main() async {
   const setting = InitializationSettings(android: androidSetting);
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-  print("onMessageReceive: StoreSqlite");
+    print("onMessageReceive: StoreSqlite");
 
-  // Format DateTime
-  final dateTime = DateTime.now();
-  final formatter = DateFormat("dd-MM-yyyy hh:mm:ss");
-  final formattedDateTime = formatter.format(dateTime);
+    // Format DateTime
+    final dateTime = DateTime.now();
+    final formatter = DateFormat("dd-MM-yyyy hh:mm:ss");
+    final formattedDateTime = formatter.format(dateTime);
 
-  // Store in Local Database
-  Sqlite().createItem(
-    NotificationModel(
-      message.notification?.title ?? "No Title",
-      message.notification?.body ?? "No Body",
-      formattedDateTime,
-    ),
-  );
+    // Store in Local Database
+    Sqlite().createItem(
+      NotificationModel(
+        message.notification?.title ?? "No Title",
+        message.notification?.body ?? "No Body",
+        formattedDateTime,
+      ),
+    );
 
-  try {
-    RemoteNotification? notification = message.notification;
-    // AndroidNotification? android = message.notification?.android;
+    try {
+      RemoteNotification? notification = message.notification;
+      // AndroidNotification? android = message.notification?.android;
 
-    if (notification != null) {
-      // Android Notification Details
-       AndroidNotificationDetails androidPlatformChannelSpecifics =
-          AndroidNotificationDetails(
-        channel.id,
-        channel.name,
-        color: Colors.blue,
-        sound: RawResourceAndroidNotificationSound('custom_sound'),
-        playSound: true,
-        icon: '@mipmap/ic_launcher', // Corrected icon reference
-        styleInformation: BigTextStyleInformation(''),
-      );
+      if (notification != null) {
+        // Android Notification Details
+        AndroidNotificationDetails androidPlatformChannelSpecifics =
+            AndroidNotificationDetails(
+          channel.id,
+          channel.name,
+          color: Colors.blue,
+          sound: RawResourceAndroidNotificationSound('custom_sound'),
+          playSound: true,
+          icon: '@mipmap/ic_launcher', // Corrected icon reference
+          styleInformation: BigTextStyleInformation(''),
+        );
 
-      // iOS Notification Details
-      const DarwinNotificationDetails iosPlatformChannelSpecifics =
-          DarwinNotificationDetails(
-        sound: 'custom_sound.caf', // Ensure custom_sound.caf exists in iOS bundle
-      );
+        // iOS Notification Details
+        const DarwinNotificationDetails iosPlatformChannelSpecifics =
+            DarwinNotificationDetails(
+          sound:
+              'custom_sound.caf', // Ensure custom_sound.caf exists in iOS bundle
+        );
 
-      // Final Notification Details
-       NotificationDetails notificationDetails = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: iosPlatformChannelSpecifics,
-      );
+        // Final Notification Details
+        NotificationDetails notificationDetails = NotificationDetails(
+          android: androidPlatformChannelSpecifics,
+          iOS: iosPlatformChannelSpecifics,
+        );
 
-      // Show Notification
-      flutterLocalNotificationsPlugin.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
-        notificationDetails,
-      );
+        // Show Notification
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          notificationDetails,
+        );
+      }
+    } catch (e) {
+      print("Firebase error: $e");
     }
-  } catch (e) {
-    print("Firebase error: $e");
-  }
 
-  print("Foreground message invoked");
-});
-
+    print("Foreground message invoked");
+  });
 
   FirebaseMessaging.instance.onTokenRefresh.listen((event) {
     print("refreshed Token:$event");
@@ -258,7 +260,8 @@ Future<void> main() async {
             home: UpgradeAlert(
               showIgnore: true,
               showLater: true,
-              child: const SplashScreen(), // Show upgrade prompt on the splash screen
+              child:
+                  const SplashScreen(), // Show upgrade prompt on the splash screen
             ),
           ),
         ),

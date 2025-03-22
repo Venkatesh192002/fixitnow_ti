@@ -1,0 +1,2 @@
+/Users/iot/Downloads/fixitnow-TI/android/app/.cxx/Debug/g4x61s13/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/iot/Downloads/fixitnow-TI/android/app/.cxx/Debug/g4x61s13/arm64-v8a/CMakeFiles/rebuild_cache.dir

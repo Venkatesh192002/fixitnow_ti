@@ -2,7 +2,6 @@ import 'package:auscurator/model/BreakdownTicketModel.dart';
 import 'package:auscurator/model/MainCategoryModel.dart';
 import 'package:auscurator/model/SubCategoryModel.dart';
 import 'package:auscurator/model/TicketDetailModel.dart';
-import 'package:auscurator/model/root_cause_model.dart';
 import 'package:flutter/foundation.dart';
 
 class BreakkdownProvider extends ChangeNotifier {
@@ -37,10 +36,10 @@ class BreakkdownProvider extends ChangeNotifier {
     _breakDownOverallData = val;
     notifyListeners();
   }
-  RootCauseModel? _rootCauseData;
-  RootCauseModel? get rootCauseData => _rootCauseData;
-  set rootCauseData(RootCauseModel? val) {
-    _rootCauseData = val;
-    notifyListeners();
-  }
+  // RootCauseModel? _rootCauseData;
+  // RootCauseModel? get rootCauseData => _rootCauseData;
+  // set rootCauseData(RootCauseModel? val) {
+    // _rootCauseData = val;
+    // notifyListeners();
+  // }
 }

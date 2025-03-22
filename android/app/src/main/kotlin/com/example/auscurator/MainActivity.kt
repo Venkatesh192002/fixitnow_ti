@@ -1,4 +1,4 @@
-package com.ausweg.iiot.auscurator_TI
+package com.ausweg.iiot.fixitnow_ti
 
 import io.flutter.embedding.android.FlutterActivity
 

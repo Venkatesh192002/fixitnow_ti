@@ -1,6 +1,5 @@
 import 'package:auscurator/machine_iot/section_bottom_sheet/widget/equipment_spinner_bloc/model/AssetModel.dart';
 import 'package:auscurator/main.dart';
-import 'package:auscurator/model/root_cause_model.dart';
 import 'package:auscurator/provider/asset_provider.dart';
 import 'package:auscurator/provider/breakkdown_provider.dart';
 import 'package:auscurator/widgets/loaders.dart';
@@ -116,33 +115,33 @@ class _CustomdDropdownDialogState extends State<CustomdDropdownDialog> {
       backgroundColor: Colors.white,
       child: Consumer<BreakkdownProvider>(
         builder: (context, break1, child) {
-          List<RootCauseList> rootCauseList =
-              break1.rootCauseData?.rootCauseLists ?? [];
+          // List<RootCauseList> rootCauseList =
+              // break1.rootCauseData?.rootCauseLists ?? [];
 
           return Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [
-                break1.isLoading
-                    ? Loader()
-                    : Expanded(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: rootCauseList.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(
-                                "${rootCauseList[index].rootCauseCode}-${rootCauseList[index].rootCauseName}",
-                              ),
-                              onTap: () {
-                                Navigator.pop(context, rootCauseList[index]);
-                              },
-                            );
-                          },
-                        ),
-                      ),
-              ],
+              // children: [
+                // break1.isLoading
+                    // ? Loader()
+                    // : Expanded(
+                    //     child: ListView.builder(
+                    //       shrinkWrap: true,
+                    //       itemCount: rootCauseList.length,
+                    //       itemBuilder: (context, index) {
+                    //         return ListTile(
+                    //           title: Text(
+                    //             "${rootCauseList[index].rootCauseCode}-${rootCauseList[index].rootCauseName}",
+                    //           ),
+                    //           onTap: () {
+                    //             Navigator.pop(context, rootCauseList[index]);
+                    //           },
+                    //         );
+                    //       },
+                    //     ),
+                    //   ),
+              // ],
             ),
           );
         },

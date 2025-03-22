@@ -29,82 +29,55 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   final List<Widget> _screens = [
     const Dashboard(),
     const Assets(),
-    const Breakdown1(),
+    const Breakdown1(), // Breakdown screen
     const Status(),
     const PM(),
   ];
 
   DateTime? lastBackPressTime;
 
+  @override
+  void initState() {
+    super.initState();
+    // Set initial screen to Breakdown1 after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      LayoutRepository().changeScreen(2, context); // Navigate to Breakdown1
+    });
+  }
+
   Future<bool> onWillPop() async {
-    // Check if the current Navigator stack can pop
     if (Navigator.of(context).canPop()) {
-      Navigator.of(context).pop(); // Pop the topmost screen
-      return Future.value(false); // Do not exit the app
+      Navigator.of(context).pop();
+      return Future.value(false);
     }
 
-    // Handle double-back press
     final now = DateTime.now();
     if (lastBackPressTime == null ||
         now.difference(lastBackPressTime!) > const Duration(seconds: 2)) {
       lastBackPressTime = now;
-      LayoutRepository().changeScreen(0, context);
+      LayoutRepository().changeScreen(2, context); // Stay on Breakdown1
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Press back again to exit'),
           duration: Duration(seconds: 2),
         ),
       );
-      return Future.value(false); // Wait for another back press
+      return Future.value(false);
     }
-    return Future.value(true); // Exit the app
+    return Future.value(true);
   }
-
-  // Future<String?> empNameFuture = SharedUtil().getEmployeeName1;
-  // Future<String?> empImageFuture = SharedUtil().getImage1;
-
-  // void refreshEmployeeData() {
-  //   setState(() {
-  //     empNameFuture = SharedUtil().getEmployeeName1;
-  //     empImageFuture = SharedUtil().getImage1;
-  //   });
-  // }
-
-  // @override
-  // void initState() {
-  //   refreshEmployeeData();
-  //   setState(() {});
-  //   super.initState();
-  // }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<LayoutProvider>(
       builder: (context, layout, _) {
         return WillPopScope(
-          onWillPop: () async {
-            final now = DateTime.now();
-            bool allowPop = false;
-            if (lastBackPressTime == null ||
-                now.difference(lastBackPressTime!) > Duration(seconds: 1)) {
-              lastBackPressTime = now;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Press back again to exit'),
-                  duration: Duration(seconds: 1),
-                ),
-              );
-              LayoutRepository().changeScreen(0, context);
-            } else {
-              allowPop = true;
-            }
-            return Future<bool>.value(allowPop);
-          }, // Override back press behavior
+          onWillPop: onWillPop,
           child: Scaffold(
             appBar: layout.pageIndex == 1
                 ? CommonAppBar(title: "Assets")
                 : layout.pageIndex == 2
-                    ? null
+                    ? null // No AppBar for Breakdown1
                     : layout.pageIndex != 0
                         ? null
                         : CommonAppBar(
@@ -117,10 +90,12 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                                   color: Colors.white,
                                   onPressed: () => {
                                     Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                NotificationScreen()))
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            NotificationScreen(),
+                                      ),
+                                    )
                                   },
                                 ),
                               ],
@@ -131,109 +106,6 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                               onPressed: () =>
                                   commonDialog(context, LogoutDialog()),
                             ),
-                            // Padding(
-                            //   padding: const EdgeInsets.only(left: 12),
-                            //   child: InkWell(
-                            //     splashFactory: NoSplash.splashFactory,
-                            //     splashColor: Colors.transparent,
-                            //     highlightColor: Colors.transparent,
-                            //     onTap: () {
-                            //       commonDialog(context, ProfileDialog());
-                            //     },
-                            //     child: Row(
-                            //       children: [
-                            //         layout.loginData?.data?[0]
-                            //                     .employeeImageUrl ==
-                            //                 null
-                            //             ? FutureBuilder<String?>(
-                            //                 future: empImageFuture,
-                            //                 builder: (context, snapshot) {
-                            //                   if (snapshot.connectionState ==
-                            //                       ConnectionState.waiting) {
-                            //                     return CircularProgressIndicator(
-                            //                         color: Colors.white,
-                            //                         strokeWidth: 2);
-                            //                   } else if (snapshot.hasError ||
-                            //                       snapshot.data == null ||
-                            //                       snapshot.data!.isEmpty) {
-                            //                     return Container(
-                            //                       width: 30,
-                            //                       height: 30,
-                            //                       clipBehavior: Clip.antiAlias,
-                            //                       decoration: BoxDecoration(
-                            //                           color:
-                            //                               Colors.grey.shade300,
-                            //                           shape: BoxShape.circle),
-                            //                       child: Icon(Icons.person,
-                            //                           color: Colors.grey),
-                            //                     );
-                            //                   } else {
-                            //                     return Container(
-                            //                       width: 30,
-                            //                       height: 30,
-                            //                       clipBehavior: Clip.antiAlias,
-                            //                       decoration: BoxDecoration(
-                            //                           color:
-                            //                               Colors.grey.shade300,
-                            //                           shape: BoxShape.circle),
-                            //                       child: NetworkImageCustom(
-                            //                         logo:
-                            //                             "${snapshot.data ?? ""}",
-                            //                         fit: BoxFit.cover,
-                            //                       ),
-                            //                     );
-                            //                   }
-                            //                 },
-                            //               )
-                            //             : Container(
-                            //                 width: 30,
-                            //                 height: 30,
-                            //                 clipBehavior: Clip.antiAlias,
-                            //                 decoration: BoxDecoration(
-                            //                     color: Colors.grey.shade300,
-                            //                     shape: BoxShape.circle),
-                            //                 child: NetworkImageCustom(
-                            //                   logo:
-                            //                       "${layout.loginData?.data?[0].employeeImageUrl}",
-                            //                   fit: BoxFit.cover,
-                            //                 ),
-                            //               ),
-                            //         // WidthHalf(),
-                            //         // Expanded(
-                            //         //   child: FutureBuilder<String?>(
-                            //         //     future: empNameFuture,
-                            //         //     builder: (context, snapshot) {
-                            //         //       if (snapshot.connectionState ==
-                            //         //           ConnectionState.waiting) {
-                            //         //         return CircularProgressIndicator(
-                            //         //             color: Colors.white,
-                            //         //             strokeWidth: 2);
-                            //         //       } else if (snapshot.hasError ||
-                            //         //           snapshot.data == null ||
-                            //         //           snapshot.data!.isEmpty) {
-                            //         //         return TextCustom(
-                            //         //           "",
-                            //         //           size: 14,
-                            //         //           maxLines: 1,
-                            //         //           color: Palette.pureWhite,
-                            //         //           fontWeight: FontWeight.bold,
-                            //         //         );
-                            //         //       } else {
-                            //         //         return TextCustom(
-                            //         //           snapshot.data!,
-                            //         //           size: 14,
-                            //         //           maxLines: 1,
-                            //         //           color: Palette.pureWhite,
-                            //         //           fontWeight: FontWeight.bold,
-                            //         //         );
-                            //         //       }
-                            //         //     },
-                            //         //   ),
-                            //         // ),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // )
                           ),
             backgroundColor: const Color(0xF5F5F5F5),
             body: _screens[layout.pageIndex],
@@ -245,7 +117,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
               child: BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,
                 backgroundColor: Colors.white,
-                items: [
+                items: const [
                   BottomNavigationBarItem(
                     icon: Icon(Icons.dashboard_outlined),
                     activeIcon: Icon(Icons.dashboard),
@@ -291,6 +163,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     );
   }
 }
+
 
 class ProfileDialog extends StatefulWidget {
   const ProfileDialog({super.key});

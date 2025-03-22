@@ -49,7 +49,8 @@ class ApiService {
 
     // If both base URLs are empty, return the default URL
     if (baseUrl.isEmpty) {
-      baseUrl = "https://backenddevcmms.auswegprime.com/";
+      baseUrl = "https://cmmstestapi.tiindia.co.in/";
+      // baseUrl = "https://cmmsapi.tiindia.co.in/";
       // baseUrl = "https://backendfixitnow.auswegprime.com/";
     }
 
@@ -380,7 +381,7 @@ class ApiService {
 
 //   //cmms api integration
   Future<AssetGroupModel> getListOfEquipmentGroup() async {
-    logger.e("${_getBaseUrl()}asset_groupLists/}");
+    logger.e("${_getBaseUrl()}asset_groupLists/");
     final cId = SharedUtil().getcompanyId;
     final bId = SharedUtil().getBuId;
     final pId = SharedUtil().getPlantId;
@@ -492,8 +493,8 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final jsonObj = json.decode(response.body);
+        logger.w(jsonObj);
         final list = jsonObj[0];
-        // logger.w(list);
 
         return AssetModel.fromJson(list);
       }
@@ -666,6 +667,7 @@ class ApiService {
         'to_date': to_date,
         'user_login_id': LoginId
       };
+      logger.i(body);
       final response = await http.post(
           Uri.parse('${_getBaseUrl()}get_breakdown_detail_list/'),
           body: body);
@@ -809,7 +811,7 @@ class ApiService {
       'department_id': deptId,
       'status': 'active'
     };
-    logger.e(body);
+    // logger.e(body);
     try {
       final response = await http.post(
           Uri.parse('${_getBaseUrl()}department_engineerLists/'),
@@ -818,7 +820,7 @@ class ApiService {
       if (response.statusCode == 200) {
         final jsonObj = json.decode(response.body);
         final list = jsonObj[0];
-        logger.e(list);
+        // logger.e(list);
 
         return EngineerOverallListModel.fromJson(list);
       }
@@ -982,6 +984,43 @@ class ApiService {
       "planned_date": planned_Date,
       "is_comment": isComment ?? "no",
       "abnormality_due_to": abnormality ?? ""
+    };
+    logger.i(body);
+
+    try {
+      final response = await http
+          .post(Uri.parse('${_getBaseUrl()}save_ticket_status/'), body: body);
+      logger.w(response.body);
+      if (response.statusCode == 200) {
+        final jsonObj = json.decode(response.body);
+        final list = jsonObj[0];
+        return SaveTicketStatusModel.fromJson(list);
+      }
+
+      if (response.statusCode != 200) {
+        print('checking:-${response.statusCode}');
+        return SaveTicketStatusModel.fromError(
+            isErrorThrown: true, errorMessage: 'Please check network..!');
+      }
+    } catch (e) {
+      return SaveTicketStatusModel.fromError(
+          isErrorThrown: true, errorMessage: e.toString());
+    }
+    return SaveTicketStatusModel.fromError(
+        isErrorThrown: true, errorMessage: 'Somthink went wrong..!');
+  }
+
+  Future<SaveTicketStatusModel> Ticketcheckin({
+    required String ticketNo,
+    required String status_id,
+    abnormality,
+  }) async {
+    final LoginId = SharedUtil().getLoginId;
+    final body = {
+      'ticket_id': ticketNo,
+      'status_id': status_id,
+      'engineer_id': LoginId,
+      'user_login_id': LoginId,
     };
     logger.i(body);
 
