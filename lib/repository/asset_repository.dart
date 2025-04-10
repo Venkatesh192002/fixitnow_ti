@@ -48,8 +48,7 @@ class AssetRepository {
     return true;
   }
 
-  Future<bool> getListOfEquipment(BuildContext context,
-      {required String assetGroupId}) async {
+  Future<bool> getListOfEquipment(BuildContext context) async {
     final cId = SharedUtil().getcompanyId;
     final bId = SharedUtil().getBuId;
     final pId = SharedUtil().getPlantId;
@@ -85,16 +84,16 @@ class AssetRepository {
                   ? "${deptId}"
                   : dId,
       "location_id": LId == "0" ? "" : LId,
-      "asset_group_id": assetGroupId,
+      "asset_group_id": "",
       "status": "active"
     };
 
-    logger.d(input);
+    // logger.d(input);
     assetProvider.isLoading = true;
     ResponseData response =
         await APIService().post(context, "assetLists/", body: input);
 
-    logger.d(response.data);
+    // logger.d(response.data);
     assetProvider.isLoading = false;
     if (response.hasError(context)) return false;
     final jsonObj = response.data;
@@ -163,7 +162,6 @@ class AssetRepository {
 
     final input = {"user_login_id": LoginId};
     ;
-    logger.d(input);
 
     assetProvider.isLoading = true;
     ResponseData response = await APIService()

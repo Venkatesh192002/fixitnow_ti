@@ -190,24 +190,18 @@ Future<void> main() async {
           color: Colors.blue,
           sound: RawResourceAndroidNotificationSound('custom_sound'),
           playSound: true,
-          icon: '@mipmap/ic_launcher', // Corrected icon reference
+          icon: '@mipmap/ic_launcher',
           styleInformation: BigTextStyleInformation(''),
         );
 
-        // iOS Notification Details
         const DarwinNotificationDetails iosPlatformChannelSpecifics =
-            DarwinNotificationDetails(
-          sound:
-              'custom_sound.caf', // Ensure custom_sound.caf exists in iOS bundle
-        );
+            DarwinNotificationDetails(sound: 'custom_sound.caf');
 
-        // Final Notification Details
         NotificationDetails notificationDetails = NotificationDetails(
           android: androidPlatformChannelSpecifics,
           iOS: iosPlatformChannelSpecifics,
         );
 
-        // Show Notification
         flutterLocalNotificationsPlugin.show(
           notification.hashCode,
           notification.title,

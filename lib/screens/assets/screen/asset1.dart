@@ -217,13 +217,13 @@ class _Asset1State extends State<Asset1> {
                                               onTap: () {
                                                 toggleGroupExpansion(
                                                     groupIndex);
-                                                AssetRepository()
-                                                    .getListOfEquipment(context,
-                                                        assetGroupId:
-                                                            assetGroupList[
-                                                                    groupIndex]
-                                                                .assetGroupId
-                                                                .toString());
+                                                // AssetRepository()
+                                                //     .getListOfEquipment(context,
+                                                //         assetGroupId:
+                                                //             assetGroupList[
+                                                //                     groupIndex]
+                                                //                 .assetGroupId
+                                                //                 .toString());
                                               },
                                               child: Icon(
                                                 expandedGroupState[groupIndex]

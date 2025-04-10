@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:auscurator/widgets/buttons.dart';
 import 'package:auscurator/widgets/context_extension.dart';
 import 'package:auscurator/widgets/custom_image_picker.dart';

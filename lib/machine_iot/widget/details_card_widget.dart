@@ -16,7 +16,7 @@ class DetailCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     // logger.w(data);
     return Container(
-      margin: const EdgeInsets.all(20),
+      margin: const EdgeInsets.all(12),
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
           color:
@@ -25,17 +25,17 @@ class DetailCardWidget extends StatelessWidget {
           boxShadow: const [BoxShadow(blurRadius: 5, color: Colors.grey)]),
       child: Column(
         children: [
-          TicketInfoCardWidget(
-              title: "${data.type} Date",
-              value:
-                  "${DateFormat("yyyy-MM-dd").format(DateTime.parse(data.dateTime.toString()))}"),
-          const SizedBox(height: 4),
-          TicketInfoCardWidget(
-              title: "${data.type} Time",
-              value:
-                  "${DateFormat("hh:mm").format(DateTime.parse(data.dateTime.toString()))}"),
-          const SizedBox(height: 4),
           TicketInfoCardWidget(title: 'Status', value: "${data.type}"),
+          const SizedBox(height: 4),
+          TicketInfoCardWidget(
+              title: "Time",
+              value:
+                  "${DateFormat("dd-MMM-yyyy").format(DateTime.parse(data.dateTime.toString()))} ${DateFormat("hh:mm").format(DateTime.parse(data.dateTime.toString()))}"),
+          // const SizedBox(height: 4),
+          // TicketInfoCardWidget(
+          //     title: "${data.type} Time",
+          //     value:
+          //         ""),
           const SizedBox(height: 4),
           TicketInfoCardWidget(
               title: "Action Done By", value: "${data.loginUserName}"),

@@ -1,3 +1,4 @@
+import 'package:auscurator/api_service_myconcept/keys.dart';
 import 'package:auscurator/provider/dashboard_provider.dart';
 import 'package:auscurator/provider/layout_provider.dart';
 import 'package:auscurator/util/shared_util.dart';
@@ -49,6 +50,7 @@ class _StackedBreakdownDetailsState extends State<StackedBreakdownDetails> {
             dash.breakdownTicketCountData!.breakdownReportLists!.isNotEmpty) {
           var countData =
               dash.breakdownTicketCountData!.breakdownReportLists![0];
+          // logger.w(countData.toJson());
           int progressCount = (countData.checkIn ?? 0) +
               (countData.onHold ?? 0) +
               (countData.pending ?? 0);
@@ -75,7 +77,6 @@ class _StackedBreakdownDetailsState extends State<StackedBreakdownDetails> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                   
                     const Text(
                       "Breakdown",
                       style: TextStyle(
@@ -91,163 +92,7 @@ class _StackedBreakdownDetailsState extends State<StackedBreakdownDetails> {
                       padding: const EdgeInsets.all(0.0),
                       child: dash.isLoading
                           ? ShimmerCustom(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Expanded(
-                                    child: Card(
-                                      color: Colors.white,
-                                      child: Column(
-                                        children: [
-                                          const Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text(
-                                              "Open",
-                                              style: TextStyle(
-                                                fontFamily: "Mulish",
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 14,
-                                                color: Color(0xFF018786),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            open_counts.isEmpty
-                                                ? '0'
-                                                : open_counts,
-                                            style: const TextStyle(
-                                              fontFamily: "Mulish",
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  // SizedBox(width: 8),
-                                  Expanded(
-                                    child: Card(
-                                      color: Colors.white,
-                                      child: Column(
-                                        children: [
-                                          const Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text(
-                                              "Assign",
-                                              style: TextStyle(
-                                                fontFamily: "Mulish",
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 14,
-                                                color: Color(0xFF018786),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            assign_counts.isEmpty
-                                                ? '0'
-                                                : assign_counts,
-                                            style: const TextStyle(
-                                              fontFamily: "Mulish",
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  // SizedBox(width: 8),
-                                  Expanded(
-                                    child: Card(
-                                      color: Colors.white,
-                                      child: Column(
-                                        children: [
-                                          const Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text(
-                                              "Progress",
-                                              style: TextStyle(
-                                                fontFamily: "Mulish",
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 14,
-                                                color: Color(0xFF018786),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            progress_counts.isEmpty
-                                                ? '0'
-                                                : progress_counts,
-                                            style: const TextStyle(
-                                              fontFamily: "Mulish",
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  // SizedBox(width: 8),
-                                  Expanded(
-                                    child: Card(
-                                      color: Colors.white,
-                                      child: Column(
-                                        children: [
-                                          const Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text(
-                                              "Fixed",
-                                              style: TextStyle(
-                                                fontFamily: "Mulish",
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 14,
-                                                color: Color(0xFF018786),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            completed_counts.isEmpty
-                                                ? '0'
-                                                : completed_counts,
-                                            style: const TextStyle(
-                                              fontFamily: "Mulish",
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              child: shimmer_breakdown(),
                             )
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -413,6 +258,157 @@ class _StackedBreakdownDetailsState extends State<StackedBreakdownDetails> {
           },
         );
       },
+    );
+  }
+
+  Row shimmer_breakdown() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Expanded(
+          child: Card(
+            color: Colors.white,
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "Open",
+                    style: TextStyle(
+                      fontFamily: "Mulish",
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      color: Color(0xFF018786),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  open_counts.isEmpty ? '0' : open_counts,
+                  style: const TextStyle(
+                    fontFamily: "Mulish",
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+              ],
+            ),
+          ),
+        ),
+        // SizedBox(width: 8),
+        Expanded(
+          child: Card(
+            color: Colors.white,
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "Assign",
+                    style: TextStyle(
+                      fontFamily: "Mulish",
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      color: Color(0xFF018786),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  assign_counts.isEmpty ? '0' : assign_counts,
+                  style: const TextStyle(
+                    fontFamily: "Mulish",
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+              ],
+            ),
+          ),
+        ),
+        // SizedBox(width: 8),
+        Expanded(
+          child: Card(
+            color: Colors.white,
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "Progress",
+                    style: TextStyle(
+                      fontFamily: "Mulish",
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      color: Color(0xFF018786),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  progress_counts.isEmpty ? '0' : progress_counts,
+                  style: const TextStyle(
+                    fontFamily: "Mulish",
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+              ],
+            ),
+          ),
+        ),
+        // SizedBox(width: 8),
+        Expanded(
+          child: Card(
+            color: Colors.white,
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "Fixed",
+                    style: TextStyle(
+                      fontFamily: "Mulish",
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                      color: Color(0xFF018786),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  completed_counts.isEmpty ? '0' : completed_counts,
+                  style: const TextStyle(
+                    fontFamily: "Mulish",
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,7 +1,7 @@
-// ignore_for_file: unused_field
-
+// ignore_for_file: unused_field,
 import 'package:animate_do/animate_do.dart';
 import 'package:auscurator/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:auscurator/model/BreakdownTicketCountsModel.dart';
 import 'package:auscurator/model/CategoryBasedModel.dart';
 import 'package:auscurator/provider/all_provider.dart';
@@ -20,7 +20,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -41,8 +40,8 @@ class _DashboardState extends State<Dashboard> {
   DateTime? _fromDate;
   DateTime? _toDate;
 
-  int _selectedIndex = 0; // Track the selected toggle button index
-  final bool _showTexts = true; // Track the visibility of the texts
+  int _selectedIndex = 0;
+  final bool _showTexts = true;
   String is_mttr = '';
   String is_down_time = '';
   final bool _isFirstLoad = true;
@@ -54,8 +53,6 @@ class _DashboardState extends State<Dashboard> {
     if (index != null) {
       setState(() {
         _selectedIndex = index;
-
-        // Set the status name based on the selected index
         switch (_selectedIndex) {
           case 0:
             _statusName = "date";
@@ -76,14 +73,11 @@ class _DashboardState extends State<Dashboard> {
             _statusName = "from_to";
             // from = DateFormat('dd-MM-yyyy')
             //     .format(DateTime.now().subtract(const Duration(days: 7)));
-
             final startOfWeek =
                 DateTime.now().subtract(Duration(days: DateTime.now().weekday));
             from = DateFormat('dd-MM-yyyy').format(startOfWeek);
             to = DateFormat('dd-MM-yyyy').format(DateTime.now());
-
             _fetchBreakdownTicketCounts();
-
             break;
           case 3:
             _statusName = "from_to";
@@ -91,7 +85,6 @@ class _DashboardState extends State<Dashboard> {
                 .format(DateTime(DateTime.now().year, DateTime.now().month, 1));
             to = DateFormat('dd-MM-yyyy').format(DateTime.now());
             _fetchBreakdownTicketCounts();
-
             break;
           case 4:
             _statusName = "from_to";
@@ -99,18 +92,13 @@ class _DashboardState extends State<Dashboard> {
                 .format(DateTime(DateTime.now().year, 1, 1));
             to = DateFormat('dd-MM-yyyy').format(DateTime.now());
             _fetchBreakdownTicketCounts();
-
             break;
           case 5:
             _statusName = "from_to";
             from = DateFormat('dd-MM-yyyy')
                 .format(DateTime(DateTime.now().year, DateTime.now().month, 1));
             to = DateFormat('dd-MM-yyyy').format(DateTime.now());
-            // _statusName = "custom_date";
-            // from = to.toString();
-            // to = from.toString();
             _fetchBreakdownTicketCounts();
-
             break;
           default:
             _statusName = "date";
@@ -139,11 +127,9 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       refreshEmployeeData();
-
       _fetchDepartmentListDirectly();
       _fetchBreakdownTicketCounts();
       refreshEmployeeData();
-
       if (employeeType == "Engineer") {
         AssetRepository().getAssetEngineerIds(context);
       }
@@ -171,7 +157,7 @@ class _DashboardState extends State<Dashboard> {
   //   //   to = "";
   //   //   _fetchDepartmentListDirectly();
   //   //   _fetchBreakdownTicketCounts();
-  //   //   _isFirstLoad = false; // Ensure this is only called once
+  //   //   _isFirstLoad = false;
   //   // }
   //   if (_isFirstLoad) {
   //     Future.delayed(Duration(seconds: 1), () {
@@ -195,10 +181,9 @@ class _DashboardState extends State<Dashboard> {
           data: ThemeData(
             useMaterial3: true,
             colorScheme: ColorScheme.light(
-              primary: const Color.fromRGBO(
-                  21, 147, 159, 1), // Header background color
-              onPrimary: Colors.white, // Header text and selected text color
-              onSurface: Colors.black, // Default text color
+              primary: const Color.fromRGBO(21, 147, 159, 1),
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
             ),
             textTheme: TextTheme(
               titleMedium: TextStyle(
@@ -217,14 +202,12 @@ class _DashboardState extends State<Dashboard> {
         if (isFromDate) {
           _fromDate = picked;
           from = DateFormat('dd-MM-yyyy').format(picked);
-          print("From date selected: $from"); // Debug: Check date
+          print("From date selected: $from");
         } else {
           _toDate = picked;
           to = DateFormat('dd-MM-yyyy').format(picked);
-          print("To date selected: $to"); // Debug: Check date
+          print("To date selected: $to");
         }
-
-        // Ensure dates are valid before calling the API
         if (from.isNotEmpty && to.isNotEmpty) {
           print("Calling API with From: $from, To: $to");
           _fetchBreakdownTicketCounts();

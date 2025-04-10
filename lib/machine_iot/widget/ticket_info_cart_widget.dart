@@ -22,7 +22,7 @@ class TicketInfoCardWidget extends StatelessWidget {
                 style: const TextStyle(
                     fontFamily: "Mulish",
                     fontWeight: FontWeight.w600,
-                    fontSize: 15),
+                    fontSize: 14),
               ),
               Text(
                 ":",
@@ -39,7 +39,7 @@ class TicketInfoCardWidget extends StatelessWidget {
           child: Text(
             value.isNotEmpty == true ? value : "--",
             overflow: TextOverflow.ellipsis,
-            maxLines: 2,
+            maxLines: 1,
             style: const TextStyle(
               fontWeight: FontWeight.w500,
               fontFamily: "Mulish",

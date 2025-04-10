@@ -319,18 +319,18 @@ class _TicketCheckInState extends State<TicketCheckIn> {
                                             //   "user_login_id": LoginId,
                                             //   "ticket_id": widget.ticketNumber
                                             // }).then((value) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      WorkLogScreen(
-                                                          ticketNo: widget
-                                                              .ticketNumber,
-                                                          status:
-                                                              breakdownDetail
-                                                                      .status ??
-                                                                  ""),
-                                                ));
+                                            // Navigator.push(
+                                            //     context,
+                                            //     MaterialPageRoute(
+                                            //       builder: (context) =>
+                                            //           WorkLogScreen(
+                                            //               ticketNo: widget
+                                            //                   .ticketNumber,
+                                            //               status:
+                                            //                   breakdownDetail
+                                            //                           .status ??
+                                            //                       ""),
+                                            //     ));
                                             // });
                                           },
                                           icon: const Icon(

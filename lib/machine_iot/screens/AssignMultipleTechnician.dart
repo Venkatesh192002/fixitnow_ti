@@ -10,6 +10,7 @@ import 'package:auscurator/model/employee_engineer_model.dart';
 import 'package:auscurator/provider/asset_provider.dart';
 import 'package:auscurator/repository/asset_repository.dart';
 import 'package:auscurator/screens/breakdown/widgets/accept_dialog.dart';
+import 'package:auscurator/screens/breakdown/widgets/checkin_checkout_dialog.dart';
 import 'package:auscurator/util/shared_util.dart';
 import 'package:auscurator/widgets/dialogs.dart';
 import 'package:auscurator/widgets/palette.dart';

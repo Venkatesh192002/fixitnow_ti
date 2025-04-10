@@ -1,11 +1,13 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:auscurator/api_service/api_service.dart';
+import 'package:auscurator/api_service_myconcept/keys.dart';
 import 'package:auscurator/components/no_data_animation.dart';
 import 'package:auscurator/machine_iot/screens/MainCategoryDialog.dart';
 import 'package:auscurator/machine_iot/screens/SubCategoryDialog.dart';
 import 'package:auscurator/machine_iot/screens/all_ticket_details.dart';
 import 'package:auscurator/machine_iot/screens/custom_search_dialog.dart';
+import 'package:auscurator/machine_iot/screens/work_log_screen.dart';
 import 'package:auscurator/machine_iot/section_bottom_sheet/widget/elevated_button_widget.dart';
 import 'package:auscurator/machine_iot/section_bottom_sheet/widget/equipment_spinner_bloc/model/AssetModel.dart';
 import 'package:auscurator/machine_iot/util.dart';
@@ -19,11 +21,14 @@ import 'package:auscurator/model/SubCategoryModel.dart';
 import 'package:auscurator/provider/all_provider.dart';
 import 'package:auscurator/provider/breakkdown_provider.dart';
 import 'package:auscurator/provider/ticket_provider.dart';
+import 'package:auscurator/repository/asset_repository.dart';
 import 'package:auscurator/repository/breakdown_repository.dart';
 import 'package:auscurator/repository/ticket_repository.dart';
+import 'package:auscurator/repository/work_log_repository.dart';
 import 'package:auscurator/screens/breakdown/screen/create_ticket.dart';
 import 'package:auscurator/screens/breakdown/widgets/accept_dialog.dart';
 import 'package:auscurator/screens/breakdown/widgets/date_time_picker.dart';
+import 'package:auscurator/screens/breakdown/widgets/deny_dialog.dart';
 import 'package:auscurator/screens/breakdown/widgets/segmented_priority.dart';
 import 'package:auscurator/util/shared_util.dart';
 import 'package:auscurator/widgets/bottom_sheet.dart';
@@ -107,11 +112,11 @@ class _Breakdown1State extends State<Breakdown1> {
             : '', // Default or selected date
         user_login_id: '',
       );
-      // TicketRepository().getAssetEquipmentList(context);
+      TicketRepository().getAssetEquipmentList(context);
       BreakdownRepository().getListOfBreadownSub(context);
-      // BreakdownRepository().getRootCauseList(context);
+      BreakdownRepository().getRootCauseList(context);
       BreakdownRepository().getListOfIssue(context);
-      // AssetRepository().getListOfEquipment(context, assetGroupId: "");
+      AssetRepository().getListOfEquipment(context);
     });
     checkConnection(context);
     searchController.addListener(() {
@@ -870,12 +875,34 @@ class _Breakdown1State extends State<Breakdown1> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.center,
                                                 children: [
-                                                  SvgPicture.asset(
-                                                    'images/ic_log.svg',
-                                                    width: 24,
-                                                    height:
-                                                        24, // Ensures the SVG fits within the given dimensions
-                                                    color: Color(0Xff018786),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      WorkLogRepository()
+                                                          .getworlLogDetail(
+                                                              context,
+                                                              ticket_no:
+                                                                  assetList[
+                                                                          index]
+                                                                      .id
+                                                                      .toString(),
+                                                              createdOn:
+                                                                  assetList[
+                                                                          index]
+                                                                      .createdOn
+                                                                      .toString(),
+                                                              ticketNumber:
+                                                                  assetList[
+                                                                          index]
+                                                                      .ticketNo
+                                                                      .toString());
+                                                    },
+                                                    child: SvgPicture.asset(
+                                                      'images/ic_log.svg',
+                                                      width: 24,
+                                                      height:
+                                                          24, // Ensures the SVG fits within the given dimensions
+                                                      color: Color(0Xff018786),
+                                                    ),
                                                   ),
                                                   Spacer(),
                                                   if (assetList[index].status ==
@@ -910,46 +937,54 @@ class _Breakdown1State extends State<Breakdown1> {
                                                   if (assetList[index].status ==
                                                       'Assign') ...[
                                                     ElevatedButton(
-                                                      onPressed: () {
-                                                        BreakdownRepository()
-                                                            .getBreakDownDetailList(
-                                                                context,
-                                                                ticket_no: assetList[
-                                                                        index]
-                                                                    .id
-                                                                    .toString());
-                                                        // .then((V) {
-                                                        commonDialog(
-                                                            context,
-                                                            AcceptDialog(
-                                                              ticketId: assetList[
+                                                      onPressed: assetList[
                                                                       index]
-                                                                  .id
-                                                                  .toString(),
-                                                              companyId:
-                                                                  assetList[
-                                                                          index]
-                                                                      .companyId
-                                                                      .toString(),
-                                                              plantId: assetList[
-                                                                      index]
-                                                                  .plantId
-                                                                  .toString(),
-                                                              deptId: assetList[
-                                                                      index]
-                                                                  .departmentId
-                                                                  .toString(),
-                                                              buId: assetList[
-                                                                      index]
-                                                                  .buId
-                                                                  .toString(),
-                                                            ));
-                                                        // });
-                                                      },
+                                                                  .assignedToEngineer ==
+                                                              ""
+                                                          ? () {
+                                                              BreakdownRepository()
+                                                                  .getBreakDownDetailList(
+                                                                      context,
+                                                                      ticket_no:
+                                                                          assetList[index]
+                                                                              .id
+                                                                              .toString());
+                                                              // .then((V) {
+                                                              commonDialog(
+                                                                  context,
+                                                                  AcceptDialog(
+                                                                    ticketId: assetList[
+                                                                            index]
+                                                                        .id
+                                                                        .toString(),
+                                                                    companyId: assetList[
+                                                                            index]
+                                                                        .companyId
+                                                                        .toString(),
+                                                                    plantId: assetList[
+                                                                            index]
+                                                                        .plantId
+                                                                        .toString(),
+                                                                    deptId: assetList[
+                                                                            index]
+                                                                        .departmentId
+                                                                        .toString(),
+                                                                    buId: assetList[
+                                                                            index]
+                                                                        .buId
+                                                                        .toString(),
+                                                                  ));
+                                                              // });
+                                                            }
+                                                          : () {},
                                                       style: ElevatedButton
                                                           .styleFrom(
-                                                        backgroundColor:
-                                                            Color(0Xff008900),
+                                                        backgroundColor: assetList[
+                                                                        index]
+                                                                    .assignedToEngineer ==
+                                                                employee_name
+                                                            ? Color(0Xff008900)
+                                                            : Colors.grey,
                                                         foregroundColor:
                                                             Colors.white,
                                                         shape:
@@ -963,10 +998,21 @@ class _Breakdown1State extends State<Breakdown1> {
                                                     ),
                                                     const SizedBox(width: 5),
                                                     if (assetList[index]
-                                                            .engineerId ==
-                                                        SharedUtil().getLoginId)
+                                                            .engineerId
+                                                            .toString() ==
+                                                        SharedUtil()
+                                                            .getLoginId
+                                                            .toString())
                                                       ElevatedButton(
-                                                        onPressed: () {},
+                                                        onPressed: () {
+                                                          commonDialog(
+                                                              context,
+                                                              DenyDialog(
+                                                                  ticketId: assetList[
+                                                                          index]
+                                                                      .id
+                                                                      .toString()));
+                                                        },
                                                         style: ElevatedButton
                                                             .styleFrom(
                                                           backgroundColor:

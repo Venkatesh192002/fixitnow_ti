@@ -45,7 +45,7 @@ class SharedUtil {
     await _prefSingle.remove("employee_name1");
     await _prefSingle.remove("image1");
     // await reloadPref();
-    logger.e("Specific keys cleared");
+    // logger.e("Specific keys cleared");
   }
 
   Future<bool> setJWTToken(String jwtToken) =>

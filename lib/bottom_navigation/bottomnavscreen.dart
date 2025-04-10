@@ -4,7 +4,7 @@ import 'package:auscurator/repository/layout_repository.dart';
 import 'package:auscurator/screens/assets/screen/Assets.dart';
 import 'package:auscurator/screens/breakdown/screen/breakdown1.dart';
 import 'package:auscurator/screens/dashboard/screen/Dashboard.dart';
-import 'package:auscurator/screens/dialog.dart/logout_dialog.dart';
+import 'package:auscurator/screens/dialog/logout_dialog.dart';
 import 'package:auscurator/screens/pm/screen/PM.dart';
 import 'package:auscurator/screens/status/screen/Status.dart';
 import 'package:auscurator/screens/widgets_common/appbar.dart';

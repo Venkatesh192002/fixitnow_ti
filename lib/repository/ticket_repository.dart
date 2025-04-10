@@ -32,7 +32,6 @@ class TicketRepository {
     ResponseData response =
         await APIService().post(context, "assetLists/", body: input);
     ticketProvider.isLoading = false;
-    logger.e(input);
     if (response.hasError(context)) return false;
     final jsonObj = response.data;
     ticketProvider.listEquipmentData = jsonObj["assetLists"];

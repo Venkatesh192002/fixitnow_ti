@@ -1,6 +1,9 @@
 // ignore_for_file: unused_local_variable
 
+import 'dart:convert';
+
 import 'package:auscurator/api_service_myconcept/api_service_new.dart';
+import 'package:auscurator/api_service_myconcept/keys.dart';
 import 'package:auscurator/api_service_myconcept/response.dart';
 import 'package:auscurator/api_service_myconcept/response_extension.dart';
 import 'package:auscurator/model/BreakdownTicketCountsModel.dart';
@@ -36,7 +39,7 @@ class DashboardRepository {
       'ticket_id': '',
       'engineer_id': '',
       'breakdown_status': '',
-      'group_by': 'department',
+      'group_by': 'plant',
       'report_type': 'cumulative',
       'period': status,
       'from_date': from_date,
@@ -55,12 +58,14 @@ class DashboardRepository {
       'user_login_id': LoginId,
     };
 
+    // logger.d(body);
     dashboardProvider.isLoading = true;
     ResponseData response =
         await APIService().post(context, "breakdown_reportLists/", body: body);
     dashboardProvider.isLoading = false;
     if (response.hasError(context)) return false;
     final jsonObj = response.data;
+    // logger.d(jsonObj);
     dashboardProvider.breakdownTicketCountData =
         BreakdownTicketCountsModel.fromJson(jsonObj);
     String message = response.data['message'] ?? '';
@@ -178,20 +183,24 @@ class DashboardRepository {
     final bId = SharedUtil().getBuId;
     final pId = SharedUtil().getPlantId;
     final dId = SharedUtil().getDepartmentId;
+
+    List companyId = jsonDecode(cId ?? "");
+    String compId = companyId.join(",");
     final body = {
       'department_id': dId == '0' ? '' : dId,
-      'company_id': cId == '0' ? '' : cId,
+      'company_id': compId == '0' ? '' : compId,
       'bu_id': bId == '0' ? '' : bId,
       'plant_id': pId == '0' ? '' : pId,
       'status': 'active',
     };
-
+    logger.i(body);
     dashboardProvider.isLoading = true;
     ResponseData response =
         await APIService().post(context, "departmentLists/", body: body);
     dashboardProvider.isLoading = false;
     if (response.hasError(context)) return false;
     final jsonObj = response.data;
+    logger.i(jsonObj);
     dashboardProvider.departmentListData =
         DepartmentListsModel.fromJson(jsonObj);
     String message = response.data['message'] ?? '';

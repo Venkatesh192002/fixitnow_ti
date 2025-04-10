@@ -2,11 +2,15 @@
 
 import 'package:animate_do/animate_do.dart';
 import 'package:auscurator/api_service/api_service.dart';
+import 'package:auscurator/api_service_myconcept/keys.dart';
 import 'package:auscurator/components/no_data_animation.dart';
+import 'package:auscurator/machine_iot/model/engineer_model.dart';
 import 'package:auscurator/machine_iot/section_bottom_sheet/widget/equipment_spinner_bloc/model/AssetModel.dart';
 import 'package:auscurator/machine_iot/widget/shimmer_effect.dart';
 import 'package:auscurator/main.dart';
 import 'package:auscurator/model/EmployeeListModel.dart';
+import 'package:auscurator/widgets/space.dart';
+import 'package:auscurator/widgets/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
@@ -34,7 +38,7 @@ class _StatusState extends ConsumerState {
   }
 
   void filterItems() {
-    setState(() {}); 
+    setState(() {});
   }
 
   @override
@@ -102,7 +106,7 @@ class _StatusState extends ConsumerState {
                 );
               }
 
-              List<EmployeeLists> assetList = snapshot.data!.employeeLists!;
+              List<EmployeeList> assetList = snapshot.data?.employeeLists ?? [];
               if (searchController.text.isNotEmpty) {
                 assetList = assetList
                     .where((asset) =>
@@ -112,13 +116,14 @@ class _StatusState extends ConsumerState {
                             .contains(searchController.text.toLowerCase()))
                     .toList();
               }
-
               return ListView.builder(
                 shrinkWrap: true,
                 itemCount: assetList.length,
                 physics: NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.symmetric(horizontal: 12),
                 itemBuilder: (context, index) {
+                  logger.d(assetList[index].status);
+                  logger.d(assetList[index].userAvailability);
                   return Column(
                     children: [
                       FadeInRight(
@@ -141,20 +146,6 @@ class _StatusState extends ConsumerState {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(children: [
-                                Container(
-                                  width: 24,
-                                  height: 24,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color:
-                                          assetList[index].status == 'active' ||
-                                                  assetList[index]
-                                                          .userAvailability ==
-                                                      "yes"
-                                              ? Colors.green
-                                              : Colors.red),
-                                ),
-                                const SizedBox(width: 5.0),
                                 Text(
                                   assetList[index].employeeName.toString(),
                                   style: TextStyle(
@@ -163,16 +154,38 @@ class _StatusState extends ConsumerState {
                                     color: Color.fromRGBO(30, 152, 165, 1),
                                   ),
                                 ),
+                                WidthHalf(),
+                                Container(
+                                  width: 20,
+                                  height: 20,
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: assetList[index].status ==
+                                                  'inactive' ||
+                                              assetList[index]
+                                                      .userAvailability ==
+                                                  "no"
+                                          ? Colors.red
+                                          : Colors.green),
+                                ),
+                                TextCustom(
+                                  assetList[index].status == 'inactive' ||
+                                          assetList[index].userAvailability ==
+                                              "no"
+                                      ? " Inactive"
+                                      : " Active",
+                                )
                               ]),
-                              const Gap(5),
+                              HeightHalf(),
                               Text(
                                 assetList[index].department ?? '',
                                 style: const TextStyle(
-                                    fontFamily: "Mulish", color: Colors.grey),
+                                    fontFamily: "Mulish"),
                                 maxLines: 5,
                               ),
-                              const Gap(5),
-                              Text(assetList[index].status.toString()),
+                              HeightHalf(),
+                              TextCustom(
+                                  "Employee Code: ${assetList[index].employeeCode}"),
                             ],
                           ),
                         ),

@@ -765,13 +765,13 @@ class ApiService {
     final cId = SharedUtil().getcompanyId;
     final bId = SharedUtil().getBuId;
     final pId = SharedUtil().getPlantId;
-    final dId = SharedUtil().getDepartmentId;
+    List companyId = jsonDecode(cId ?? "");
+    String formattedIds = companyId.join(',');
     final body = {
       'employee_id': '',
-      'company_id': cId == '0' ? '' : cId,
+      'company_id': cId == '0' ? '' : formattedIds,
       'bu_id': bId == '0' ? '' : bId,
       'plant_id': pId == '0' ? '' : pId,
-      'department_id': dId == '0' ? '' : dId,
       'is_engineer': 'yes',
       'user_availability': userAvail,
       'status': 'active'
@@ -787,16 +787,13 @@ class ApiService {
       }
 
       if (response.statusCode != 200) {
-        return EmployeeListModel.fromError(
-            isErrorThrown: true, errorMessage: 'Please check network..!');
+        return EmployeeListModel.fromError('Please check network..!');
       }
     } catch (e) {
-      return EmployeeListModel.fromError(
-          isErrorThrown: true, errorMessage: e.toString());
+      return EmployeeListModel.fromError(e.toString());
     }
 
-    return EmployeeListModel.fromError(
-        isErrorThrown: true, errorMessage: 'Somthink went wrong..!');
+    return EmployeeListModel.fromError('Somthink went wrong..!');
   }
 
   Future<EngineerOverallListModel> getEngineerOverallList(

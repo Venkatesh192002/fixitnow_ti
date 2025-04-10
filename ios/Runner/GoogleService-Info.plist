@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyCJ81F_IwDjJeKom54S2iNwgo5180bJk3M</string>
+	<string>AIzaSyCeXLR9ze_a1Er3wtbVhPuqJHCcYwU78iE</string>
 	<key>GCM_SENDER_ID</key>
-	<string>120583001583</string>
+	<string>287628625820</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>FixItNow.iosApp.TI</string>
+	<string>Auscurator.iosApp.TI</string>
 	<key>PROJECT_ID</key>
-	<string>auscuratorti</string>
+	<string>fixitnow-ti</string>
 	<key>STORAGE_BUCKET</key>
-	<string>auscuratorti.appspot.com</string>
+	<string>fixitnow-ti.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:120583001583:ios:79c4dcc1bb0c3f09a0121a</string>
+	<string>1:287628625820:ios:df65e466fd7d082f386a59</string>
 </dict>
 </plist>

@@ -46,22 +46,20 @@ class DefaultFirebaseOptions {
     }
   }
 
-  
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyATXbWt5RYo0dtsDCVK4ScOuG5Iat4JCA0',
-    appId: '1:120583001583:android:673a694beb733ae0a0121a',
-    messagingSenderId: '120583001583',
-    projectId: 'auscuratorti',
-    storageBucket: 'auscuratorti.appspot.com',
+    apiKey: 'AIzaSyBH-rb6l3qqIU4pTL9T4mg8wM3bSLud8VU',
+    appId: '1:287628625820:android:4f56d5cf90d9ca78386a59',
+    messagingSenderId: '287628625820',
+    projectId: 'fixitnow-ti',
+    storageBucket: 'fixitnow-ti.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCJ81F_IwDjJeKom54S2iNwgo5180bJk3M',
-    appId: '1:120583001583:ios:79c4dcc1bb0c3f09a0121a',
-    messagingSenderId: '120583001583',
-    projectId: 'auscuratorti',
-    storageBucket: 'auscuratorti.appspot.com',
-    iosBundleId: 'FixItNow.iosApp.TI',
+    apiKey: 'AIzaSyCeXLR9ze_a1Er3wtbVhPuqJHCcYwU78iE',
+    appId: '1:287628625820:ios:df65e466fd7d082f386a59',
+    messagingSenderId: '287628625820',
+    projectId: 'fixitnow-ti',
+    storageBucket: 'fixitnow-ti.firebasestorage.app',
+    iosBundleId: 'Auscurator.iosApp.TI',
   );
 }
