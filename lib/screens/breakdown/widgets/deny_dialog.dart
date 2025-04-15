@@ -1,8 +1,6 @@
 import 'package:auscurator/api_service/api_service.dart';
-import 'package:auscurator/api_service_myconcept/api_helper.dart';
 import 'package:auscurator/bottom_navigation/bottomnavscreen.dart';
 import 'package:auscurator/machine_iot/util.dart';
-import 'package:auscurator/model/TicketDetailModel.dart';
 import 'package:auscurator/provider/breakkdown_provider.dart';
 import 'package:auscurator/util/shared_util.dart';
 import 'package:auscurator/widgets/buttons.dart';

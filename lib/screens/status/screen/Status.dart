@@ -1,10 +1,8 @@
 // ignore_for_file: deprecated_member_use
-
 import 'package:animate_do/animate_do.dart';
 import 'package:auscurator/api_service/api_service.dart';
 import 'package:auscurator/api_service_myconcept/keys.dart';
 import 'package:auscurator/components/no_data_animation.dart';
-import 'package:auscurator/machine_iot/model/engineer_model.dart';
 import 'package:auscurator/machine_iot/section_bottom_sheet/widget/equipment_spinner_bloc/model/AssetModel.dart';
 import 'package:auscurator/machine_iot/widget/shimmer_effect.dart';
 import 'package:auscurator/main.dart';
@@ -13,7 +11,6 @@ import 'package:auscurator/widgets/space.dart';
 import 'package:auscurator/widgets/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gap/gap.dart';
 
 class Status extends ConsumerStatefulWidget {
   const Status({super.key});

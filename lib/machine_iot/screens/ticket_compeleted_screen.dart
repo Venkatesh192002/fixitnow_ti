@@ -3,7 +3,6 @@ import 'package:auscurator/components/no_data_animation.dart';
 import 'package:auscurator/machine_iot/screens/MTTREditScreen.dart';
 import 'package:auscurator/machine_iot/screens/consumed_spares_screen.dart';
 import 'package:auscurator/machine_iot/screens/solution_bank_edit_screen.dart';
-import 'package:auscurator/machine_iot/screens/work_log_screen.dart';
 import 'package:auscurator/machine_iot/widget/shimmer_effect.dart';
 import 'package:auscurator/machine_iot/widget/ticket_info_cart_widget.dart';
 import 'package:auscurator/main.dart';

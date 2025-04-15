@@ -5,7 +5,6 @@ import 'package:auscurator/machine_iot/screens/TicketAcceptScreen.dart';
 import 'package:auscurator/machine_iot/screens/TicketDetailsScreen.dart';
 import 'package:auscurator/machine_iot/screens/spare_edit_screen.dart';
 import 'package:auscurator/machine_iot/screens/why_why_screen.dart';
-import 'package:auscurator/machine_iot/screens/work_log_screen.dart';
 import 'package:auscurator/machine_iot/util.dart';
 import 'package:auscurator/machine_iot/widget/shimmer_effect.dart';
 import 'package:auscurator/machine_iot/widget/ticket_info_cart_widget.dart';

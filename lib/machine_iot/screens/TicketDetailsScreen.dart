@@ -1,6 +1,5 @@
 import 'package:auscurator/api_service/api_service.dart';
 import 'package:auscurator/components/no_data_animation.dart';
-import 'package:auscurator/machine_iot/screens/work_log_screen.dart';
 import 'package:auscurator/machine_iot/widget/shimmer_effect.dart';
 import 'package:auscurator/main.dart';
 import 'package:auscurator/model/TicketDetailModel.dart';

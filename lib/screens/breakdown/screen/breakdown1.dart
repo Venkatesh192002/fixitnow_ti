@@ -1,13 +1,10 @@
 // ignore_for_file: deprecated_member_use
-
 import 'package:auscurator/api_service/api_service.dart';
-import 'package:auscurator/api_service_myconcept/keys.dart';
 import 'package:auscurator/components/no_data_animation.dart';
 import 'package:auscurator/machine_iot/screens/MainCategoryDialog.dart';
 import 'package:auscurator/machine_iot/screens/SubCategoryDialog.dart';
 import 'package:auscurator/machine_iot/screens/all_ticket_details.dart';
 import 'package:auscurator/machine_iot/screens/custom_search_dialog.dart';
-import 'package:auscurator/machine_iot/screens/work_log_screen.dart';
 import 'package:auscurator/machine_iot/section_bottom_sheet/widget/elevated_button_widget.dart';
 import 'package:auscurator/machine_iot/section_bottom_sheet/widget/equipment_spinner_bloc/model/AssetModel.dart';
 import 'package:auscurator/machine_iot/util.dart';
@@ -456,7 +453,6 @@ class _Breakdown1State extends State<Breakdown1> {
                   ),
                 ),
               ),
-
               // Vertical list
               // FutureBuilder(
               //     future: companyFuture,
@@ -464,7 +460,6 @@ class _Breakdown1State extends State<Breakdown1> {
               // if (snapshot.hasError) {
               //   return Center(child: Text(snapshot.error.toString()));
               // }
-
               // if (snapshot.connectionState == ConnectionState.waiting) {
               //   return SingleChildScrollView(
               //     child: const Center(

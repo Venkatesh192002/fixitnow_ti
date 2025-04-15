@@ -21,7 +21,7 @@ abstract class AppStrings {
   }
 
   /// App name
-  static const String appName = "Auspower";
+  static const String appName = "FixItNow";
 
   /// App Description
   static const String appDesc =

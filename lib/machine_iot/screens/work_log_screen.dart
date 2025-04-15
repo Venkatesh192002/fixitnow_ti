@@ -4,7 +4,6 @@ import 'package:auscurator/machine_iot/widget/my_time_line_widget.dart'
     show MyTimeLineWidget;
 import 'package:auscurator/model/worklogdetail_model.dart';
 import 'package:auscurator/provider/work_log_provider.dart';
-import 'package:auscurator/repository/work_log_repository.dart';
 import 'package:auscurator/widgets/palette.dart';
 import 'package:auscurator/widgets/shimmer_custom.dart';
 import 'package:auscurator/widgets/space.dart';
